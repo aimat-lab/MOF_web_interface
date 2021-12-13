@@ -9,8 +9,9 @@
 
 # How to start the development server:
 - Open a command line terminal and go to the main project directory (where README.md and manage.py are located)
-- Execute the command ```python manage.py runserver```. !!! Important !!! This is a dev. server don't use it in production!
+- Execute the command ```python manage.py runserver```
 - Now you can open your browser. The server is accessible at "http://127.0.0.1:8000/test_ai/"
+- !!! Important !!! This is a dev. server don't use it in production!
 
 # Paper
 **MOF Synthesis Prediction Enabled by Automatic Data Mining and Machine Learning**  
