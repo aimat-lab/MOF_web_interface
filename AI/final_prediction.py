@@ -14,6 +14,7 @@ def final_prediction(MOF_random_name, predictions_temperature, predictions_time,
     else:
         data = predictions_temperature
     temperature=sum(data)/len(data)
+    temperature_string = "%.2f"%(temperature)
 
     print ('ML Predcited Temperature :' , round(temperature,1), 'C')
 
@@ -29,7 +30,7 @@ def final_prediction(MOF_random_name, predictions_temperature, predictions_time,
         data = predictions_time
 
     time=sum(data)/len(data)
-
+    time_string = "%.2f"%(time)
     print ('ML Predcited Time :' , round(time,1), 'Hours')
 
 
@@ -66,7 +67,7 @@ def final_prediction(MOF_random_name, predictions_temperature, predictions_time,
     order = np.argsort(mae)
 
     print ("ML Predicted Five Solvents Are: ",name[order[0]],name[order[1]],name[order[2]],name[order[3]], name[order[4]])
-    solvent = name[order[0]]
+    solvent_string = name[order[0]]
 
     ####################Additive############################
 
@@ -84,16 +85,16 @@ def final_prediction(MOF_random_name, predictions_temperature, predictions_time,
 
     if additive<0.5:
         print ('ML Predicts the Additive is : A Base' )
-        additive_string = "base"
+        additive_string = "Base"
     elif additive>=0.5 and additive <=1.5:
         print ('ML Predicts the Additive is : Neutral/No Additive' )
-        additive_string = "no_additive"
+        additive_string = "No additive"
     elif additive>1.5:
         print ('ML Predicts the Additive is : An Acid' )
-        additive_string = "acid"
+        additive_string = "Acid"
 
 
-    return([temperature, time, solvent, additive_string])
+    return([temperature_string, time_string, solvent_string, additive_string])
 
 
 

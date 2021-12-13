@@ -21,8 +21,8 @@
         <div style="height: 60px"></div>
 
         <div class="center">
-            <h2>TEST AI</h2>
-            <p>Choose a file to upload:</p>
+            <h2>MOF Synthesis prediction</h2>
+            <p>Choose a cif file to upload:</p>
             <form method="post" enctype="multipart/form-data">
                 {% csrf_token %}
                 <input type="file" name="document">
@@ -30,11 +30,35 @@
             </form>
             <div style="height: 60px"></div>
 
-            The Result will be printed below.
+            The results will be printed below. The calculation might take a few seconds.
             <div style="height: 60px"></div>
-            Result:
-            {% if file_content %}
-                File contains: {{ file_content }}
+            {% if temperature %}
+                <h3>Temperature: {{ temperature }} °C</h3>
+                <div class="image_container">
+                    <img src="{% static 'test_ai/icon_temperature.png' %}" alt="icon temperature" width="81">
+                </div>
+                <br>
+            {% endif %}
+            {% if time %}
+                <h3>Time: {{ time }} hours</h3>
+                <div class="image_container">
+                    <img src="{% static 'test_ai/icon_time.png' %}" alt="icon time" width="81">
+                </div>
+                <br>
+            {% endif %}
+            {% if solvent %}
+                <h3>Solvent: {{ solvent }}</h3>
+                <div class="image_container">
+                    <img src="{% static 'test_ai/icon_solvent.png' %}" alt="icon solvent" width="81">
+                </div>
+                <br>
+            {% endif %}
+            {% if additive %}
+                <h3>Additive: {{ additive }}</h3>
+                <div class="image_container">
+                    <img src="{% static 'test_ai/icon_additive.png' %}" alt="icon additive" width="81">
+                </div>
+                <br>
             {% endif %}
         </div>
     </body>

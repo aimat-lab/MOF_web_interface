@@ -26,7 +26,7 @@ def upload(request):
         outfile.close()
         predictions = do_all.do_all("temp_cif_files/%s"%(cif_filename))
         print(predictions)
-        result = {'file_content': file_content, 'predictions': predictions}
+        result = {'file_content': file_content, 'predictions': predictions, 'temperature': predictions[0], 'time': predictions[1], 'solvent': predictions[2], 'additive': predictions[3]}
         os.chdir(startpath)
     return render(request, 'test_ai/upload.html', result)
 

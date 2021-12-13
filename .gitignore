@@ -132,6 +132,7 @@ dmypy.json
 .idea/
 
 AI/__pychache__
+AI/__pychache__/*
 AI/*log
 AI/cif_files/*
 AI/predictions/*

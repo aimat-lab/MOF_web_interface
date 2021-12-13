@@ -3,6 +3,7 @@ import sys
 import time
 from datetime import datetime
 import uuid
+import pandas as pd
 
 print(__file__)
 # own libraries
@@ -44,7 +45,9 @@ def do_all(cif_filename):
 
     ################Calculation of RAC Features of the downloaded cif file using Molsimplify######################
 
-    df_new = MOF_RAC_example.compute_features(MOF_random_name)
+    #df_new = MOF_RAC_example.compute_features(MOF_random_name)
+    df_new = pd.read_csv('additional_data/full_featurization_frame.csv')
+
     #####################################################################
 
     ##################Load the ML Models and run  (Now only RF model is loaded)##################
