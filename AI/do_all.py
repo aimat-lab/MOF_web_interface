@@ -45,8 +45,8 @@ def do_all(cif_filename):
 
     ################Calculation of RAC Features of the downloaded cif file using Molsimplify######################
 
-    #df_new = MOF_RAC_example.compute_features(MOF_random_name)
-    df_new = pd.read_csv('additional_data/full_featurization_frame.csv')
+    df_new = MOF_RAC_example.compute_features(MOF_random_name)
+    #df_new = pd.read_csv('additional_data/full_featurization_frame.csv')
 
     #####################################################################
 
