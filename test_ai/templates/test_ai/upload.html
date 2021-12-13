@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+    {% load static %}
+    <link rel="stylesheet" type="text/css" href="{% static 'test_ai/style.css' %}">
+    <head>
+        <meta charset="utf-8">
+        <title>AIMAT</title>
+        <link rel="shortcut icon" type="image/png" href="{% static 'test_ai/favicon.ico' %}"/>
+    </head>
+    <body>
+        <div class="image_container">
+            <img src="{% static 'test_ai/AiMat_logo_blue_transparent_rdax_168x76.png' %}">
+        </div>
+        <div class="topnav">
+            <a href="{% url 'index' %}">Home</a>
+            <a class="active" href="{% url 'upload' %}">AI Test</a>
+            <a href="https://github.com/aimat-lab/">GIT Hub</a>
+            <a href="https://aimat.iti.kit.edu/">AiMat Site</a>
+        </div>
+
+        <div style="height: 60px"></div>
+
+        <div class="center">
+            <h2>TEST AI</h2>
+            <p>Choose a file to upload:</p>
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                <input type="file" name="document">
+                <button type="submit">Upload</button>
+            </form>
+            <div style="height: 60px"></div>
+
+            The Result will be printed below.
+            <div style="height: 60px"></div>
+            Result:
+            {% if file_content %}
+                File contains: {{ file_content }}
+            {% endif %}
+        </div>
+    </body>
+</html>
+
+

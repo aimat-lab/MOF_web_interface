@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+    {% load static %}
+    <link rel="stylesheet" type="text/css" href="{% static 'test_ai/style.css' %}">
+    <head>
+        <meta charset="utf-8">
+        <title>AIMAT</title>
+        <link rel="shortcut icon" type="image/png" href="{% static 'test_ai/favicon.ico' %}"/>
+    </head>
+    <body>
+        <div class="image_container">
+            <img src="{% static 'test_ai/AiMat_logo_blue_transparent_rdax_168x76.png' %}">
+        </div>
+        <div class="topnav">
+            <a class="active" href="{% url 'index' %}">Home</a>
+            <a href="{% url 'upload' %}">AI Test</a>
+            <a href="https://github.com/aimat-lab/">GIT Hub</a>
+            <a href="https://aimat.iti.kit.edu/">AiMat Site</a>
+        </div>
+    </body>
+</html>
+
