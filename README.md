@@ -3,9 +3,9 @@
 # Requirements
 - Python 3.x
 - Django
-- RDKit ("https://www.rdkit.org/docs/Install.html")
-- molSimplify ("https://github.com/hjkgrp/molSimplify")
-- Pymatgen (Python Materials Genomics) ("https://pymatgen.org/installation.html")
+- RDKit (https://www.rdkit.org/docs/Install.html)
+- molSimplify (https://github.com/hjkgrp/molSimplify)
+- Pymatgen (Python Materials Genomics) (https://pymatgen.org/installation.html)
 
 # How to start the development server:
 - Open a command line terminal and go to the main project directory (where README.md and manage.py are located)
