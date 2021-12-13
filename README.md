@@ -1,11 +1,13 @@
 # MOF_Web_Server
 
-What you need to install:
-1) Python
-2) Django
+# Requirements
+- Python 3.x
+- Django
+- RDKit (https://www.rdkit.org/docs/Install.html)
+- molSimplify (https://github.com/hjkgrp/molSimplify)
+- Pymatgen (Python Materials Genomics) (https://pymatgen.org/installation.html)
 
-How to start the development server:
-1) open a commandline in the the main project folder (where README.md and manage.py is)
-2) execute the command "python manage.py runserver". !!!Important!!! This is a dev. server don't use it in production!
-
-Now you can open your browser. The server should be accessible at "http://127.0.0.1:8000/test_ai/" (this can be changed)
+# How to start the development server:
+- Open a command line terminal and go to the main project directory (where README.md and manage.py are located)
+- Execute the command "python manage.py runserver". !!! Important !!! This is a dev. server don't use it in production!
+- Now you can open your browser. The server is accessible at "http://127.0.0.1:8000/test_ai/" 
