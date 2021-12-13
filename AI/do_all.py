@@ -4,13 +4,14 @@ import time
 from datetime import datetime
 import uuid
 
+print(__file__)
 # own libraries
-import MOF_RAC_example
-import model_additive
-import model_solvent
-import model_temperature
-import model_time
-import final_prediction
+from AI import MOF_RAC_example
+from AI import model_additive
+from AI import model_solvent
+from AI import model_temperature
+from AI import model_time
+from AI import final_prediction
 
 
 def do_all(cif_filename):

@@ -1,5 +1,7 @@
 from django.shortcuts import render
-from AI import MOF_script
+from AI import do_all
+import os
+
 
 
 def index(request):
@@ -13,7 +15,22 @@ def upload(request):
         upload_file = request.FILES['document']
         print(upload_file.name)
         print(upload_file.size)
+
+        startpath = os.getcwd()
+        os.chdir("AI")
         file_content = upload_file.read()
-        MOF_script.test()
-        result = {'file_content': file_content}
+        #cif_filename = "tests/mof1.cif" # for testing
+        cif_filename = upload_file.name
+        outfile=open("temp_cif_files/%s"%(cif_filename), "bw")
+        outfile.write(file_content)
+        outfile.close()
+        predictions = do_all.do_all("temp_cif_files/%s"%(cif_filename))
+        print(predictions)
+        result = {'file_content': file_content, 'predictions': predictions}
+        os.chdir(startpath)
     return render(request, 'test_ai/upload.html', result)
+
+
+
+
+
