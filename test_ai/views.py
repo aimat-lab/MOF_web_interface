@@ -19,7 +19,7 @@ def upload(request):
         startpath = os.getcwd()
         print(startpath)
         if startpath.endswith("MOF_web_interface"):
-            startpath+="/../"
+            startpath+="/AI"
         elif startpath.endswith("AI"):
             pass
 
