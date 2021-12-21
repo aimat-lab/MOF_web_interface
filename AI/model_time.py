@@ -65,9 +65,9 @@ def model_time(MOF_random_name = None, df_new = None, startpath = None):
 
     ###########Open_A_file_to_write_all_prediction###
 
-    if not os.path.exists("%s/predictions"%(outdir)):
-        os.makedirs("%s/predictions"%(outdir))
-    single_prediction=open('predictions/%s_time_prediction.dat'%(MOF_random_name),'w')
+    if not os.path.exists("%s/predictions"%(startpath)):
+        os.makedirs("%s/predictions"%(startpath))
+    single_prediction=open('%s/predictions/%s_time_prediction.dat'%(startpath, MOF_random_name),'w')
 
 
     #############Print the Versions of the Sklearn and rdkit library#####################

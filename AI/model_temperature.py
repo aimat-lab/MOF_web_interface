@@ -85,8 +85,8 @@ def model_temperature(MOF_random_name = None, df_new = None, startpath = None):
 
     ###########Open_A_file_to_write_all_prediction###
 
-    if not os.path.exists("%s/predictions"%(outdir)):
-        os.makedirs("%s/predictions"%(outdir))
+    if not os.path.exists("%s/predictions"%(startpath)):
+        os.makedirs("%s/predictions"%(startpath))
 
     single_prediction=open('%s/predictions/%s_temperature_prediction.dat'%(startpath, MOF_random_name),'w')
 
