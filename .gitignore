@@ -136,3 +136,4 @@ AI/__pychache__/*
 AI/*log
 AI/cif_files/*
 AI/predictions/*
+AI/temp_cif_files
