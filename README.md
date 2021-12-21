@@ -24,4 +24,4 @@ More information and code can be found on "https://github.com/aimat-lab/MOF_Synt
 
 # Contact
 - ML models: Saientan Bag (saientan.bag9@kit.edu) and Pascal Friederich (pascal.friederich@kit.edu)
-- Web interface: adrian.cierpka@student.kit.edu
+- Web interface: Matthias Schniewind (matthias.schniewind@kit.edu) und Adrian Cierpka (adrian.cierpka@student.kit.edu)
