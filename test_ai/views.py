@@ -24,9 +24,15 @@ def upload(request):
         outfile=open("temp_cif_files/%s"%(cif_filename), "bw")
         outfile.write(file_content)
         outfile.close()
-        predictions = do_all.do_all("temp_cif_files/%s"%(cif_filename))
-        print(predictions)
-        result = {'file_content': file_content, 'predictions': predictions, 'temperature': predictions[0], 'time': predictions[1], 'solvent': predictions[2], 'additive': predictions[3]}
+        result=None
+        try:
+            predictions = do_all.do_all("temp_cif_files/%s"%(cif_filename))
+            print(predictions)
+            result = {'file_content': file_content, 'predictions': predictions, 'temperature': predictions[0], 'time': predictions[1], 'solvent': predictions[2], 'additive': predictions[3]}
+        except:
+            print("The AI threw an error!")
+            result = {'file_content': "ERROR", 'predictions': "ERROR", 'temperature': "ERROR",
+             'time': "ERROR", 'solvent': "ERROR", 'additive': "ERROR"}
         os.chdir(startpath)
     return render(request, 'test_ai/upload.html', result)
 
