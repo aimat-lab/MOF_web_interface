@@ -42,7 +42,7 @@ def do_all(cif_filename, startpath = None):
     if not os.path.exists("%s/cif_files/"%(startpath)):
         os.makedirs("%s/cif_files/"%(startpath))
 
-    if os.path.exists("%s/%s"%(startpath, cif_filename)):
+    if os.path.exists("%s/cif_files/%s"%(startpath, cif_filename)):
         if not os.path.exists("%s/cif_files/%s"%(startpath, MOF_random_name)):
             os.makedirs("%s/cif_files/%s"%(startpath, MOF_random_name))
         print("Hallo")
