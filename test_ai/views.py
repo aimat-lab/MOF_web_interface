@@ -17,6 +17,7 @@ def upload(request):
         print(upload_file.size)
 
         startpath = os.getcwd()
+        print(startpath)
         os.chdir("AI")
         file_content = upload_file.read()
         #cif_filename = "tests/mof1.cif" # for testing
@@ -25,14 +26,19 @@ def upload(request):
         outfile.write(file_content)
         outfile.close()
         result=None
+        print("TEST2")
         try:
+            print("TEST3")
             predictions = do_all.do_all("temp_cif_files/%s"%(cif_filename))
+            print("TEST4")
             print(predictions)
             result = {'file_content': file_content, 'predictions': predictions, 'temperature': predictions[0], 'time': predictions[1], 'solvent': predictions[2], 'additive': predictions[3]}
-        except:
+        except Exception as e:
+            print(e.message)
             print("The AI threw an error!")
             result = {'file_content': "ERROR", 'predictions': "ERROR", 'temperature': "ERROR",
              'time': "ERROR", 'solvent': "ERROR", 'additive': "ERROR"}
+        print("TEST5")
         os.chdir(startpath)
     return render(request, 'test_ai/upload.html', result)
 

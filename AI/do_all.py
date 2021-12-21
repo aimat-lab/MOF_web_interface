@@ -7,13 +7,20 @@ import pandas as pd
 
 print(__file__)
 # own libraries
-from AI import MOF_RAC_example
-from AI import model_additive
-from AI import model_solvent
-from AI import model_temperature
-from AI import model_time
-from AI import final_prediction
-
+try:
+    from AI import MOF_RAC_example
+    from AI import model_additive
+    from AI import model_solvent
+    from AI import model_temperature
+    from AI import model_time
+    from AI import final_prediction
+except:
+    import MOF_RAC_example
+    import model_additive
+    import model_solvent
+    import model_temperature
+    import model_time
+    import final_prediction
 
 def do_all(cif_filename):
 
