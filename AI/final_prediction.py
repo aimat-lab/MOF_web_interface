@@ -2,12 +2,15 @@ import pylab
 import numpy as np
 import pandas as pd
 
-def final_prediction(MOF_random_name, predictions_temperature, predictions_time, predictions_solvent, predictions_additive):
+def final_prediction(MOF_random_name, predictions_temperature, predictions_time, predictions_solvent, predictions_additive, startpath = None):
+
+    if startpath is None:
+        startpath = os.getcwd()
 
     #################Temperature##################
     if predictions_temperature is None:
-        if os.path.exists('predictions/temperature_prediction.dat'):
-            data = pylab.loadtxt('predictions/temperature_prediction.dat')
+        if os.path.exists('%s/predictions/temperature_prediction.dat'%(startpath)):
+            data = pylab.loadtxt('%s/predictions/temperature_prediction.dat'%(startpath))
         else:
             print("ERROR: file not found: predictions/temperature_prediction.dat")
             return(None)
@@ -21,8 +24,8 @@ def final_prediction(MOF_random_name, predictions_temperature, predictions_time,
 
     ####################Time###################
     if predictions_time is None:
-        if os.path.exists('predictions/time_prediction.dat'):
-            data=pylab.loadtxt('predictions/time_prediction.dat')
+        if os.path.exists('%s/predictions/time_prediction.dat'%(startpath)):
+            data=pylab.loadtxt('%s/predictions/time_prediction.dat'%(startpath))
         else:
             print("ERROR: file not found: predictions/time_prediction.dat")
             return(None)
@@ -36,8 +39,8 @@ def final_prediction(MOF_random_name, predictions_temperature, predictions_time,
 
     ####################Solvent###################
     if predictions_solvent is None:
-        if os.path.exists('predictions/solvent_prediction.dat'):
-            data=pylab.loadtxt('predictions/solvent_prediction.dat')
+        if os.path.exists('predictions/solvent_prediction.dat'%(startpath)):
+            data=pylab.loadtxt('predictions/solvent_prediction.dat'%(startpath))
         else:
             print("ERROR: file not found: predictions/solvent_prediction.dat")
             return(None)
@@ -45,7 +48,7 @@ def final_prediction(MOF_random_name, predictions_temperature, predictions_time,
         data = predictions_solvent
 
 
-    df=pd.read_csv("additional_data/local_solvent_full.csv")
+    df=pd.read_csv("%s/additional_data/local_solvent_full.csv"%(startpath))
     name=df["solvent_name"]
 
     l=len(data)
@@ -56,7 +59,7 @@ def final_prediction(MOF_random_name, predictions_temperature, predictions_time,
     p4=sum(data[:,4])/len(data[:,4])
 
 
-    data_sol=pylab.loadtxt('additional_data/scaled_five_parameter_local_solvent.dat')
+    data_sol=pylab.loadtxt('%s/additional_data/scaled_five_parameter_local_solvent.dat'%(startpath))
     l1=len(data_sol)
 
     mae=np.zeros(l1)
@@ -72,8 +75,8 @@ def final_prediction(MOF_random_name, predictions_temperature, predictions_time,
     ####################Additive############################
 
     if predictions_additive is None:
-        if os.path.exists('predictions/additive_prediction.dat'):
-            data=pylab.loadtxt('predictions/additive_prediction.dat')
+        if os.path.exists('%s/predictions/additive_prediction.dat'%(startpath)):
+            data=pylab.loadtxt('%s/predictions/additive_prediction.dat'%(startpath))
         else:
             print("ERROR: file not found: predictions/additive_prediction.dat")
             return(None)

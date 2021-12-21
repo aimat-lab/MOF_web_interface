@@ -49,7 +49,10 @@ def reg_stats(y_true,y_pred,scaler=None):
 
 
 
-def model_additive(MOF_random_name = None, df_new = None):
+def model_additive(MOF_random_name = None, df_new = None, startpath = None):
+
+    if startpath is None:
+        startpath = os.getcwd()
 
     if MOF_random_name is None:
         now = datetime.now()
@@ -74,24 +77,26 @@ def model_additive(MOF_random_name = None, df_new = None):
 
     target="additive_category"  #Here output of the ML classification model is additive category
 
-    csvfilename="datasets/rac_features_additive.csv"
+    csvfilename="%s/datasets/rac_features_additive.csv"%(startpath)
     df = pd.read_csv(csvfilename)  ## The csv file containing the input output of the ML models
 
-    if df_new is None and os.path.exists('full_featurization_frame.csv'):
+    if df_new is None and os.path.exists('%s/full_featurization_frame.csv'%(startpath)):
         print("WARNING: USING THE TEST FEATURES FROM additional_data/full_featurization_frame.csv")
-        df_new = pd.read_csv('additional_data/full_featurization_frame.csv')
+        df_new = pd.read_csv('%s/additional_data/full_featurization_frame.csv'%(startpath))
 
 
 
     ###########Open_A_file_to_write_all_prediction###
-    single_prediction=open('predictions/%s_additive_prediction.dat'%(MOF_random_name),'w')
+    if not os.path.exists("%s/predictions"%(outdir)):
+        os.makedirs("%s/predictions"%(outdir))
+    single_prediction=open('%s/predictions/%s_additive_prediction.dat'%(startpath, MOF_random_name),'w')
 
     ###########Training of ML Model given the input ("df") and output("target") of the model############### 
 
 
 
     fontname='Arial' 
-    outdir=os.getcwd()
+    outdir = startpath
 
     print("start training")
 
@@ -191,10 +196,10 @@ def model_additive(MOF_random_name = None, df_new = None):
             ####over training and test data set
             y_pred_train = model.predict(x_train)
             y_pred_test = model.predict(x_test)
-            np.savetxt("./prediction_data/predictions_rawdata_additive/y_real_"+str(counter)+"_test.txt", y_test)
-            np.savetxt("./prediction_data/predictions_rawdata_additive/y_real_"+str(counter)+"_train.txt", y_train)
-            np.savetxt("./prediction_data/predictions_rawdata_additive/y_RFR_"+str(counter)+"_test.txt", y_pred_test)
-            np.savetxt("./prediction_data/predictions_rawdata_additive/y_RFR_"+str(counter)+"_train.txt", y_pred_train)
+            np.savetxt("%s/prediction_data/predictions_rawdata_additive/y_real_"%(outdir)+str(counter)+"_test.txt", y_test)
+            np.savetxt("%s/prediction_data/predictions_rawdata_additive/y_real_"%(outdir)+str(counter)+"_train.txt", y_train)
+            np.savetxt("%s/prediction_data/predictions_rawdata_additive/y_RFR_"%(outdir)+str(counter)+"_test.txt", y_pred_test)
+            np.savetxt("%s/prediction_data/predictions_rawdata_additive/y_RFR_"%(outdir)+str(counter)+"_train.txt", y_pred_train)
 
         else:
             model = joblib.load("%s/models/models_additive/random_forest_regression_%i.joblib"%(outdir, counter))

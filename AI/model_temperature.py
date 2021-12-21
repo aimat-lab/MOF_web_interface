@@ -47,7 +47,10 @@ def reg_stats(y_true,y_pred,scaler=None):
 
 
 
-def model_temperature(MOF_random_name = None, df_new = None):
+def model_temperature(MOF_random_name = None, df_new = None, startpath = None):
+
+    if startpath is None:
+        startpath = os.getcwd()
 
     if MOF_random_name is None:
         now = datetime.now()
@@ -71,28 +74,33 @@ def model_temperature(MOF_random_name = None, df_new = None):
 
     target="temperature" # Here output of the ML model in time
 
-    csvfilename="datasets/rac_features_temperature.csv"
+    csvfilename="%s/datasets/rac_features_temperature.csv"%(startpath)
     df = pd.read_csv(csvfilename)  ## The csv file containing the input output of the ML models
 
 
-    if df_new is None and os.path.exists('full_featurization_frame.csv'):
+    if df_new is None and os.path.exists('%s/full_featurization_frame.csv'%(startpath)):
         print("WARNING: USING THE TEST FEATURES FROM additional_data/full_featurization_frame.csv")
-        df_new = pd.read_csv('additional_data/full_featurization_frame.csv')
+        df_new = pd.read_csv('%s/additional_data/full_featurization_frame.csv'%(startpath))
 
 
     ###########Open_A_file_to_write_all_prediction###
-    single_prediction=open('predictions/%s_temperature_prediction.dat'%(MOF_random_name),'w')
+
+    if not os.path.exists("%s/predictions"%(outdir)):
+        os.makedirs("%s/predictions"%(outdir))
+
+    single_prediction=open('%s/predictions/%s_temperature_prediction.dat'%(startpath, MOF_random_name),'w')
 
 
     ###########Training of ML Model given the input(df) and  output("target") of the model###############
 
     fontname='Arial' 
-    outdir=os.getcwd()
+    outdir = startpath
 
     print("start training")
 
     if not os.path.exists("%s/models"%(outdir)):
         os.makedirs("%s/models"%(outdir))
+
 
     if not os.path.exists("%s/prediction_data"%(outdir)):
         os.makedirs("%s/prediction_data"%(outdir))
@@ -212,10 +220,10 @@ def model_temperature(MOF_random_name = None, df_new = None):
 
             #### Saving and plotting of the predictions
 
-            np.savetxt("./prediction_data/predictions_rawdata_temperature/y_real_"+str(counter)+"_test.txt", y_test_unscaled)
-            np.savetxt("./prediction_data/predictions_rawdata_temperature/y_real_"+str(counter)+"_train.txt", y_train_unscaled)
-            np.savetxt("./prediction_data/predictions_rawdata_temperature/y_RFR_"+str(counter)+"_test.txt", y_pred_test_unscaled)
-            np.savetxt("./prediction_data/predictions_rawdata_temperature/y_RFR_"+str(counter)+"_train.txt", y_pred_train_unscaled)
+            np.savetxt("%s/prediction_data/predictions_rawdata_temperature/y_real_"%(outdir)+str(counter)+"_test.txt", y_test_unscaled)
+            np.savetxt("%s/prediction_data/predictions_rawdata_temperature/y_real_"%(outdir)+str(counter)+"_train.txt", y_train_unscaled)
+            np.savetxt("%s/prediction_data/predictions_rawdata_temperature/y_RFR_"%(outdir)+str(counter)+"_test.txt", y_pred_test_unscaled)
+            np.savetxt("%s/prediction_data/predictions_rawdata_temperature/y_RFR_"%(outdir)+str(counter)+"_train.txt", y_pred_train_unscaled)
 
             plt.figure()
             plt.scatter(y_pred_train_unscaled, y_train_unscaled, marker="o", c="C1", label="Training: r$^2$ = %.3f"%(r2_GBR_train))

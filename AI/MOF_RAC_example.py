@@ -12,7 +12,7 @@ def get_primitive(datapath, writepath):
     sprim.to("cif", writepath)
 
 
-def compute_features(MOF_random_name):
+def compute_features(MOF_random_name, startpath):
 
     featurization_list = []
     #### Adapt this directory for your use.
@@ -24,22 +24,22 @@ def compute_features(MOF_random_name):
     ### The code expects to look for a directory called /cif/ in the example directory
 
     #### This first part gets the primitive cells ####
-    if not os.path.exists('cif_files/%s/molsimplify/'%(MOF_random_name)):
-        os.mkdir('cif_files/%s/molsimplify/'%(MOF_random_name))
-    if not os.path.exists('cif_files/%s/xyz/'%(MOF_random_name)):
-        os.mkdir('cif_files/%s/xyz/'%(MOF_random_name))
+    if not os.path.exists('%s/cif_files/%s/molsimplify/'%(startpath, MOF_random_name)):
+        os.mkdir('%s/cif_files/%s/molsimplify/'%(startpath, MOF_random_name))
+    if not os.path.exists('%s/cif_files/%s/xyz/'%(startpath, MOF_random_name)):
+        os.mkdir('%s/cif_files/%s/xyz/'%(startpath, MOF_random_name))
 
-    cif_file = "cif_files/%s/mof.cif"%(MOF_random_name)
-    get_primitive("cif_files/%s/mof.cif"%(MOF_random_name), "cif_files/%s/mof_primitive.cif"%(MOF_random_name))
+    cif_file = "%s/cif_files/%s/mof.cif"%(startpath, MOF_random_name)
+    get_primitive("%s/cif_files/%s/mof.cif"%(startpath, MOF_random_name), "%s/cif_files/%s/mof_primitive.cif"%(startpath, MOF_random_name))
     #### With the primitive cells, we can generate descriptors and write them
-    full_names, full_descriptors = get_MOF_descriptors("cif_files/%s/mof_primitive.cif"%(MOF_random_name), 3, path="cif_files/%s/molsimplify"%(MOF_random_name), xyzpath="cif_files/%s/xyz/mof.xyz"%(MOF_random_name))
+    full_names, full_descriptors = get_MOF_descriptors("%s/cif_files/%s/mof_primitive.cif"%(startpath, MOF_random_name), 3, path="%s/cif_files/%s/molsimplify"%(startpath, MOF_random_name), xyzpath="%s/cif_files/%s/xyz/mof.xyz"%(startpath, MOF_random_name))
     full_names.append('filename')
     full_descriptors.append(cif_file)
     featurization = dict(zip(full_names, full_descriptors))
     featurization_list.append(featurization)
     df = pd.DataFrame(featurization_list) 
     ### Write the RACs to the directory. Full featurization frame contains everything.
-    df.to_csv('cif_files/%s/full_featurization_frame.csv'%(MOF_random_name), index=False) 
+    df.to_csv('%s/cif_files/%s/full_featurization_frame.csv'%(startpath, MOF_random_name), index=False) 
 
 
     #### The full featurization frame contains all features. 

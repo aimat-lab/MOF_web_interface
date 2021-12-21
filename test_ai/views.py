@@ -18,28 +18,31 @@ def upload(request):
 
         startpath = os.getcwd()
         print(startpath)
-        os.chdir("AI")
+        if startpath.endswith("MOF_web_interface"):
+            pass
+        elif startpath.endswith("AI"):
+            startpath+="/../"
+        exit()
+        #os.chdir("AI")
         file_content = upload_file.read()
         #cif_filename = "tests/mof1.cif" # for testing
         cif_filename = upload_file.name
-        outfile=open("temp_cif_files/%s"%(cif_filename), "bw")
+        outfile=open("%s/temp_cif_files/%s"%(startpath, cif_filename), "bw")
         outfile.write(file_content)
         outfile.close()
         result=None
-        print("TEST2")
+
         try:
-            print("TEST3")
-            predictions = do_all.do_all("temp_cif_files/%s"%(cif_filename))
-            print("TEST4")
-            print(predictions)
+            predictions = do_all.do_all("%s/temp_cif_files/%s"%(startpath, cif_filename), startpath)
+
             result = {'file_content': file_content, 'predictions': predictions, 'temperature': predictions[0], 'time': predictions[1], 'solvent': predictions[2], 'additive': predictions[3]}
         except Exception as e:
             print(e.message)
             print("The AI threw an error!")
             result = {'file_content': "ERROR", 'predictions': "ERROR", 'temperature': "ERROR",
              'time': "ERROR", 'solvent': "ERROR", 'additive': "ERROR"}
-        print("TEST5")
-        os.chdir(startpath)
+
+        #os.chdir(startpath)
     return render(request, 'test_ai/upload.html', result)
 
 
