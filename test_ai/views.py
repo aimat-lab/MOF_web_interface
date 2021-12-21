@@ -27,6 +27,7 @@ def upload(request):
         file_content = upload_file.read()
         #cif_filename = "tests/mof1.cif" # for testing
         cif_filename = upload_file.name
+        print(cif_filename)
         outfile=open("%s/temp_cif_files/%s"%(startpath, cif_filename), "bw")
         outfile.write(file_content)
         outfile.close()
