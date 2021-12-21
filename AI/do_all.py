@@ -45,7 +45,9 @@ def do_all(cif_filename, startpath = None):
     if os.path.exists("%s/%s"%(startpath, cif_filename)):
         if not os.path.exists("%s/cif_files/%s"%(startpath, MOF_random_name)):
             os.makedirs("%s/cif_files/%s"%(startpath, MOF_random_name))
+        print("Hallo")
         os.system("cp %s %s/cif_files/%s/mof.cif"%(cif_filename, startpath, MOF_random_name)) #######Copy the downloaded cif file to the cif directory
+        print("Hallo 2")
     else:
         print("ERROR: file not found: %s"%(cif_filename))
         return(None, None, None, None)

@@ -32,6 +32,7 @@ def upload(request):
         outfile.close()
         result=None
         print("writing new cif file to %s/temp_cif_files/%s"%(startpath, cif_filename))
+
         try:
             predictions = do_all.do_all("%s/temp_cif_files/%s"%(startpath, cif_filename), startpath)
 
