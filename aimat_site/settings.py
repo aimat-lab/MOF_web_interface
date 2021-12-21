@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-()rpkt1xk(ot2rvta6u!a_#(yxbo7izi2a%j$_yu*!f5hm4al7
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['mof-synthesis.aimat.science']
 
 
 # Application definition
