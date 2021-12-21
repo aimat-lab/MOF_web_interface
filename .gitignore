@@ -137,5 +137,7 @@ AI/*log
 AI/cif_files/*
 AI/predictions/*
 AI/temp_cif_files/*
+AI/prediction_data/
 AI/prediction_data/*
+AI/models/
 AI/models/*
