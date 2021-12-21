@@ -19,10 +19,10 @@ def upload(request):
         startpath = os.getcwd()
         print(startpath)
         if startpath.endswith("MOF_web_interface"):
-            pass
-        elif startpath.endswith("AI"):
             startpath+="/../"
-        exit()
+        elif startpath.endswith("AI"):
+            pass
+
         #os.chdir("AI")
         file_content = upload_file.read()
         #cif_filename = "tests/mof1.cif" # for testing
