@@ -141,3 +141,6 @@ AI/prediction_data/
 AI/prediction_data/*
 AI/models/
 AI/models/*
+
+#private key
+django_secret_key.txt
