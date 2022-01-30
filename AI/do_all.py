@@ -4,6 +4,7 @@ import time
 from datetime import datetime
 import uuid
 import pandas as pd
+import shutil
 
 print(__file__)
 # own libraries
@@ -45,7 +46,7 @@ def do_all(cif_filename, startpath = None):
     if os.path.exists("%s"%(cif_filename)):
         if not os.path.exists("%s/cif_files/%s"%(startpath, MOF_random_name)):
             os.makedirs("%s/cif_files/%s"%(startpath, MOF_random_name))
-        os.system("cp %s %s/cif_files/%s/mof.cif"%(cif_filename, startpath, MOF_random_name)) #######Copy the downloaded cif file to the cif directory
+        shutil.copy(cif_filename, f'{startpath}/cif_files/{MOF_random_name}/mof.cif') #######Copy the downloaded cif file to the cif directory
     else:
         print("ERROR: file not found: %s"%(cif_filename))
         return(None, None, None, None)
