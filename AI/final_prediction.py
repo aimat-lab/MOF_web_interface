@@ -17,7 +17,7 @@ def final_prediction(MOF_random_name, predictions_temperature, predictions_time,
     else:
         data = predictions_temperature
     temperature=sum(data)/len(data)
-    temperature_string = "%.2f"%(temperature)
+    temperature_string = "%.0f"%(temperature)
 
     print ('ML Predcited Temperature :' , round(temperature,1), 'C')
 
@@ -33,7 +33,7 @@ def final_prediction(MOF_random_name, predictions_temperature, predictions_time,
         data = predictions_time
 
     time=sum(data)/len(data)
-    time_string = "%.2f"%(time)
+    time_string = "%.1f"%(time)
     print ('ML Predcited Time :' , round(time,1), 'Hours')
 
 
