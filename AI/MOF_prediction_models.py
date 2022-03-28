@@ -280,7 +280,7 @@ class RF_Model():
 
         if not os.path.exists(scatter_plot_file):
 
-            csv_files = glob.glob('%s/std_list_rs*.csv'%validation_target_path)    
+            csv_files = glob.glob('%s/std_list_rs*.csv'%self.validation_target_path)    
 
             with open(csv_files[0]) as infile:
                 csv_lines=infile.readlines()[1:]
@@ -295,7 +295,7 @@ class RF_Model():
             xval = range(len(names))
 
             plt.figure()
-            plt.title('Prediction error of different KFold splits for all structures')
+            plt.title('%s prediction error of different KFold splits for all structures'%self.target.capitalize())
             plt.ylabel("Error")
             plt.xlabel("Structure no.")
 
