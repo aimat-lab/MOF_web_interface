@@ -264,9 +264,12 @@ class RF_Model():
                         model = joblib.load('%s/random_forest_%s_model_%02i_%02i.joblib'%(models_rs_path, self.model_type, count_ext, count_int))
         
                         # prediction for independent test split
-                        y_pred_test_scaled = model.predict(x_test).reshape(-1, self.n_feat)
-                        y_pred_test_unscaled = self.y_scaler.inverse_transform(y_pred_test_scaled)
-                        y_pred_test_set.append(y_pred_test_unscaled)
+                        y_pred_test = model.predict(x_test).reshape(-1, self.n_feat)
+                        if self.regression:
+                            y_pred_test_unscaled = self.y_scaler.inverse_transform(y_pred_test_scaled)
+                            y_pred_test_set.append(y_pred_test_unscaled)
+                        else:
+                            y_pred_test_set.append(y_pred_test)
 
                         count_int += 1
 
@@ -394,9 +397,9 @@ class Additive_Model(Classification_Model):
         for y_pred_set in y_pred_test_all:
             y_pred_struct = [[int(y_pred_set[1][j][i]) for j in range(len(y_pred_set[1]))] for i in range(len(y_pred_set[1][0]))]
             correct_pred += [y.count(max(y,key=y.count))/len(y)for y in y_pred_struct]
-            filenames += [df['filename'].iloc[idx] for idx in y_pred_set[0]]
+            filenames += [self.df['filename'].iloc[idx] for idx in y_pred_set[0]]
 
-        filenames, correct_pred = zip(*sorted(zip(filenames, std)))
+        filenames, correct_pred = zip(*sorted(zip(filenames, correct_pred)))
 
         with open(csv_file,'w') as outfile:
             outfile.write('filename, correct predictions\n')
@@ -427,7 +430,7 @@ class Solvent_Model(Regression_Model):
             centroids = [[np.average([y_pred_set[1][k][i][j] for k in range(len(y_pred_set[1]))]) for j in range(len(y_pred_set[1][0][0]))] for i in range(len(y_pred_set[1][0]))]
             centroid_dist += [np.sqrt(sum([(y_pred_set[1][k][i][j]-centroids[i][j])**2 for j in range(len(centroids[0])) for k in range(len(y_pred_set[1]))])/len(y_pred_set[1])) for i in range(len(centroids))]
 
-            filenames += [df['filename'].iloc[idx] for idx in y_pred_set[0]]
+            filenames += [self.df['filename'].iloc[idx] for idx in y_pred_set[0]]
 
         filenames, std = zip(*sorted(zip(filenames, centroid_dist)))
 
