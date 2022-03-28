@@ -71,7 +71,6 @@ def make_histogram(data, bin_width, xlabel, filename):
 
         fig, ax = plt.subplots()
 
-        bin_width = 0.5
         min_bin = math.floor(2*min(data)/bin_width)*bin_width/2
         max_bin = math.ceil(2*max(data)/bin_width)*bin_width/2
 
@@ -266,7 +265,7 @@ class RF_Model():
                         # prediction for independent test split
                         y_pred_test = model.predict(x_test).reshape(-1, self.n_feat)
                         if self.regression:
-                            y_pred_test_unscaled = self.y_scaler.inverse_transform(y_pred_test_scaled)
+                            y_pred_test_unscaled = self.y_scaler.inverse_transform(y_pred_test)
                             y_pred_test_set.append(y_pred_test_unscaled)
                         else:
                             y_pred_test_set.append(y_pred_test)
@@ -434,13 +433,13 @@ class Solvent_Model(Regression_Model):
 
         filenames, std = zip(*sorted(zip(filenames, centroid_dist)))
 
-        with open(rs_csv_file,'w') as outfile:
+        with open(csv_file,'w') as outfile:
             outfile.write('filename, centroid distance\n')
             for i in range(len(centroid_dist)):
                 outfile.write('%s, %s\n'%(filenames[i], centroid_dist[i]))
 
                 
-        make_histogram(centroid_dist, 0.05, 'Distances from centroid of the scaled %s models'%self.target, hist_file)
+        make_histogram(centroid_dist, 0.01, 'Distances from centroid of the scaled %s models'%self.target, hist_file)
 
 class TT_Model(Regression_Model):
 
