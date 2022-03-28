@@ -274,7 +274,7 @@ class RF_Model():
 
                     count_ext += 1
 
-                make_validation_histogram(y_pred_test_all, rs_csv_file, rs_hist_file) # define method in subclass depending on property
+                self.make_validation_histogram(y_pred_test_all, rs_csv_file, rs_hist_file) # define method in subclass depending on property
 
         scatter_plot_file = '%s/std_scatter_plots_10_splits_%s.png'%(self.validation_target_path, self.target)
 
@@ -295,8 +295,8 @@ class RF_Model():
             xval = range(len(names))
 
             plt.figure()
-            plt.title('Standard deviation of different KFold splits for all structures')
-            plt.ylabel("Std")
+            plt.title('Prediction error of different KFold splits for all structures')
+            plt.ylabel("Error")
             plt.xlabel("Structure no.")
 
             for i in range(len(error_values)):
@@ -387,7 +387,7 @@ class Additive_Model(Classification_Model):
 
         return(return_string)
 
-    def make_validation_histogram(y_pred_test_all, csv_file, hist_file):
+    def make_validation_histogram(self, y_pred_test_all, csv_file, hist_file):
 
         correct_pred, filenames = [], []
 
@@ -419,7 +419,7 @@ class Solvent_Model(Regression_Model):
 
         return(solvent_names[solvent_order[0]])
 
-    def make_validation_histogram(y_pred_test_all, csv_file, hist_file):
+    def make_validation_histogram(self, y_pred_test_all, csv_file, hist_file):
 
         centroid_dist, filenames = [], []
                 
@@ -450,7 +450,7 @@ class TT_Model(Regression_Model):
         return(return_string)
 
     
-    def make_validation_histogram(y_pred_test_all, csv_file, hist_file):
+    def make_validation_histogram(self, y_pred_test_all, csv_file, hist_file):
         
         std, filenames = [], []
 
