@@ -49,6 +49,7 @@ for dirname in [models_path, validation_path, predictions_path]:
     if not os.path.exists(dirname):
         os.makedirs(dirname)
 
+
 ### Define the mean absolute error(mae), root mean squared error (rmse)  and r2 as an output of a function ###
 
 def reg_stats(y_true, y_pred, y_scaler = None):
@@ -67,6 +68,7 @@ def reg_stats(y_true, y_pred, y_scaler = None):
 
     return r2, mae, rmse
 
+
 def make_histogram(data, bin_width, xlabel, filename):
 
         fig, ax = plt.subplots()
@@ -83,6 +85,7 @@ def make_histogram(data, bin_width, xlabel, filename):
         plt.savefig(filename,dpi=300)
         plt.close()
 
+
 class RF_Model():
 
     # ### Print the version of the sklearn library ###
@@ -91,15 +94,9 @@ class RF_Model():
     # print('   ---   sklearn:{}'.format(sklearn.__version__))
     # print('   ---   rdkit:{}'.format(rdkit.__version__))
 
-    def __init__(self, target, target_unit = '', feature_names = None):
+    def __init__(self):
 
-        if not feature_names:
-            feature_names = [target]
-
-        self.target = target
-        self.target_unit = target_unit
-        self.feature_names = feature_names
-        self.n_feat = len(feature_names)
+        self.n_feat = len(self.feature_names)
 
         ### Seed ###
 
@@ -108,16 +105,16 @@ class RF_Model():
         
         ### Create directories for target ###
     
-        self.models_target_path = '%s/models_%s'%(models_path, target)
-        self.validation_target_path = '%s/validation_%s'%(validation_path, target)
-        # self.scatter_plots_path = '%s/scatter_plots_%s'%(models_path,target)
+        self.models_target_path = '%s/models_%s'%(models_path, self.target)
+        self.validation_target_path = '%s/validation_%s'%(validation_path, self.target)
+        # self.scatter_plots_path = '%s/scatter_plots_%s'%(models_path, self.target)
 
         for dirname in [self.models_target_path, self.validation_target_path]:
             if not os.path.exists(dirname):
                 os.makedirs(dirname)
 
         # Prepare data for the ML model according to precomputed features by Kulik et. al. with given input(df) and output("target") #
-        self.df = pd.read_csv('%s/datasets/rac_features_%s.csv'%(startpath,target))
+        self.df = pd.read_csv('%s/datasets/rac_features_%s.csv'%(startpath, self.target))
         self.all_indices = np.array(self.df.index.tolist())
 
         # definition and standard scaling of the input features
@@ -129,7 +126,7 @@ class RF_Model():
         # joblib.dump(x_scaler_feat, '%s/random_forest_%s_x_scaler.joblib'%(self.models_target_path, self.model_type))
 
         # definition of the output of the ML model 
-        self.y_unscaled = self.df[feature_names].values
+        self.y_unscaled = self.df[self.feature_names].values
 
     def train(self, base_path = None, rs = None):
         
@@ -225,9 +222,9 @@ class RF_Model():
                     # plt.savefig('%s/full_data_RFR_%02i_%02i.png'%(self.scatter_plots_path, count_ext, count_int), dpi=300)
                     # plt.close()
             
-                count_int +=1
+                count_int += 1
         
-            count_ext +=1
+            count_ext += 1
 
     def validate(self):
         for rs in [453, 7644, 24369, 42548, 86310, 273214, 358412, 414551, 712111, 983187]:
@@ -347,28 +344,31 @@ class RF_Model():
         # Write all predictions to a file
         # np.savetxt('%s/%s_%s_prediction.dat'%(predictions_path, MOF_random_name, self.target), self.single_predictions)
 
+
 class Classification_Model(RF_Model):
     
-    regression = False
-
-    model_type='classification'
-    rf_model = RandomForestClassifier(max_depth=5)
-
     def __init__(self, *args, **kwargs):
-        super(Classification_Model,self).__init__(*args, **kwargs)
+
+        self.regression = False
+        self.model_type = 'classification'
+        self.rf_model = RandomForestClassifier(max_depth=5)
+
+        super().__init__(*args, **kwargs)
         
+        # No scaling of the output
         self.y_scaler = None
         self.y = self.y_unscaled
 
+
 class Regression_Model(RF_Model):
     
-    regression = True
-
-    model_type='regression'
-    rf_model = RandomForestRegressor(max_depth=5)
-
     def __init__(self, *args, **kwargs):
-        super(Regression_Model,self).__init__(*args, **kwargs)
+
+        self.regression = True
+        self.model_type = 'regression'
+        self.rf_model = RandomForestRegressor(max_depth=5)
+
+        super().__init__(*args, **kwargs)
         
         # standard scaling of the output
         self.y_scaler = StandardScaler()
@@ -377,7 +377,15 @@ class Regression_Model(RF_Model):
         # save y_scaler (is it needed somewhere later?)
         # joblib.dump(y_scaler, '%s/random_forest_%s_y_scaler.joblib'%(self.models_target_path, self.model_type))
 
+
 class Additive_Model(Classification_Model):
+
+    def __init__(self, *args, **kwargs):
+
+        self.target = 'additive'
+        self.feature_names = ['additive_category']
+
+        super().__init__(*args, **kwargs)
 
     def get_final_prediction(self):
 
@@ -407,7 +415,15 @@ class Additive_Model(Classification_Model):
 
         make_histogram(correct_pred, 0.1, 'Occurence of most frequent prediction in the %s models'%self.target, hist_file)
 
+
 class Solvent_Model(Regression_Model):
+
+    def __init__(self, *args, **kwargs):
+
+        self.target = 'solvent'
+        self.feature_names = ['param%i'%(i+1) for i in range(5)]
+
+        super().__init__(*args, **kwargs)
 
     def get_final_prediction(self):
         solvent_names = pd.read_csv("%s/additional_data/local_solvent_full.csv"%(startpath))['solvent_name']
@@ -441,7 +457,16 @@ class Solvent_Model(Regression_Model):
                 
         make_histogram(centroid_dist, 0.01, 'Distances from centroid of the scaled %s models'%self.target, hist_file)
 
+
 class TT_Model(Regression_Model):
+
+    def __init__(self, target, target_unit = '', *args, **kwargs):
+
+        self.target = target
+        self.target_unit = target_unit
+        self.feature_names = [target]
+
+        super().__init__(*args, **kwargs)
 
     def get_final_prediction(self):
 
@@ -451,7 +476,6 @@ class TT_Model(Regression_Model):
 
         return(return_string)
 
-    
     def make_validation_histogram(self, y_pred_test_all, csv_file, hist_file):
         
         std, filenames = [], []
@@ -468,6 +492,4 @@ class TT_Model(Regression_Model):
                 outfile.write('%s, %s\n'%(filenames[i], std[i]))
 
         make_histogram(std, 0.5, 'Standard deviation of the %s models'%self.target, hist_file)
-
-
 

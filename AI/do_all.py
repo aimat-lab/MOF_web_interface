@@ -11,15 +11,13 @@ print(__file__)
 try:
     from AI import MOF_RAC_example
     from AI import MOF_prediction_models
-    from AI import final_prediction
 except:
     import MOF_RAC_example
     import MOF_prediction_models
-    import final_prediction
 
 def do_all(cif_filename, startpath = None):
 
-    ### Initialise the ML models (train and validate)
+    ### Initialise the ML models (train and validate if necessary)
 
     Temperature_Model = MOF_prediction_models.TT_Model(target = 'temperature', target_unit = '°C')
     Temperature_Model.train()
@@ -29,11 +27,11 @@ def do_all(cif_filename, startpath = None):
     Time_Model.train()
     Time_Model.validate()
 
-    Additive_Model = MOF_prediction_models.Additive_Model(target = 'additive', feature_names = ['additive_category'])
+    Additive_Model = MOF_prediction_models.Additive_Model()
     Additive_Model.train()
     Additive_Model.validate()
 
-    Solvent_Model = MOF_prediction_models.Solvent_Model(target = 'solvent', feature_names = ['param%i'%(i+1) for i in range(5)])
+    Solvent_Model = MOF_prediction_models.Solvent_Model()
     Solvent_Model.train()
     Solvent_Model.validate()
 
