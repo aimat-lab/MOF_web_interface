@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+    {% load static %}
+    <link rel="stylesheet" type="text/css" href="{% static 'test_ai/style.css' %}">
+    <head>
+        <meta charset="utf-8">
+        <title>AIMAT</title>
+        <link rel="shortcut icon" type="image/png" href="{% static 'test_ai/favicon.ico' %}"/>
+    </head>
+    <body>
+        <div class="image_container">
+            <img src="{% static 'test_ai/MOF_Synthesis_Prediction_no_text.png' %}" alt="logo" width="810">
+        </div>
+        <div class="topnav">
+            <a href="{% url 'index' %}">Home</a>
+            <a class="active" href="{% url 'upload' %}">MOF Synthesis Prediction</a>
+            <a href="https://chemrxiv.org/engage/chemrxiv/article-details/610936ae8804439fdde55e7b" target="_blank">Paper</a>
+            <a href="https://github.com/aimat-lab/MOF_Synthesis_Prediction" target="_blank">GIT Hub</a>
+            <a href="https://aimat.science" target="_blank">AiMat Lab</a>
+            <a href="https://tsotsalas-group.com" target="_blank">Tsotsalas Group</a>
+        </div>
+
+        <div style="height: 60px"></div>
+
+        <div class="center">
+            <h2>MOF Synthesis prediction</h2>
+            <p>Choose a cif file to upload:</p>
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                <input type="file" name="document">
+                <button type="submit">Upload</button>
+            </form>
+            <div style="height: 60px"></div>
+            If you want to test the prediction using MOF-5, you can download a cif file here: <a href="{% static 'test_ai/EDUSIF_clean.cif' %}" download="">Download MOF-5.cif</a>
+            <div style="height: 60px"></div>
+            The results will be printed below. The calculation might take a few seconds.
+            <div style="height: 60px"></div>
+	    <table>
+		    <tr>
+            {% if temperature %}
+	    <h3>Temperature: {{ temperature }} °C ({{ temperature_cert}} certainty prediction)</h3>
+                <div class="image_container">
+                    <img src="{% static 'test_ai/icon_temperature.png' %}" alt="icon temperature" width="81">
+                </div>
+                <br>
+            {% endif %}
+		    </tr>
+		    <tr>
+            {% if time %}
+                <h3>Time: {{ time }} hours</h3>
+                <div class="image_container">
+                    <img src="{% static 'test_ai/icon_time.png' %}" alt="icon time" width="81">
+                </div>
+                <br>
+            {% endif %}
+		    </tr>
+		    <tr>
+            {% if solvent %}
+                <h3>Solvent: {{ solvent }}</h3>
+                <div class="image_container">
+                    <img src="{% static 'test_ai/icon_solvent.png' %}" alt="icon solvent" width="81">
+                </div>
+                <br>
+            {% endif %}
+		    </tr>
+		    <tr>
+            {% if additive %}
+                <h3>Additive: {{ additive }}</h3>
+                <div class="image_container">
+                    <img src="{% static 'test_ai/icon_additive.png' %}" alt="icon additive" width="81">
+                </div>
+                <br>
+            {% endif %}
+		    </tr>
+	    </table>
+        </div>
+    </body>
+</html>
+
+

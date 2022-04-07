@@ -41,14 +41,15 @@ features_basic=["f-chi-0-all","f-chi-1-all","f-chi-2-all","f-chi-3-all","f-Z-0-a
 
 startpath = os.getcwd()
 
-models_path = '%s/models'%startpath
+models_base_path = '%s/models'%startpath
 validation_path = '%s/validation'%startpath
 predictions_path = '%s/predictions'%startpath
 
-for dirname in [models_path, validation_path, predictions_path]:
+for dirname in [models_base_path, validation_path, predictions_path]:
     if not os.path.exists(dirname):
         os.makedirs(dirname)
 
+kf = KFold(n_splits = 10, shuffle = True)
 
 ### Define the mean absolute error(mae), root mean squared error (rmse)  and r2 as an output of a function ###
 
@@ -71,19 +72,19 @@ def reg_stats(y_true, y_pred, y_scaler = None):
 
 def make_histogram(data, bin_width, xlabel, filename):
 
-        fig, ax = plt.subplots()
+    fig, ax = plt.subplots()
 
-        min_bin = math.floor(2*min(data)/bin_width)*bin_width/2
-        max_bin = math.ceil(2*max(data)/bin_width)*bin_width/2
+    min_bin = math.floor(2*min(data)/bin_width)*bin_width/2
+    max_bin = math.ceil(2*max(data)/bin_width)*bin_width/2
 
-        ax.set_xlim(xmin = min_bin-bin_width, xmax = max_bin+bin_width)
+    ax.set_xlim(xmin = min_bin-bin_width, xmax = max_bin+bin_width)
 
-        n, bins, patches = ax.hist(data,bins=np.arange((math.ceil(min_bin/bin_width)-0.5)*bin_width,(1.5+math.floor(max_bin/bin_width))*bin_width,bin_width))
+    n, bins, patches = ax.hist(data,bins=np.arange((math.ceil(min_bin/bin_width)-0.5)*bin_width,(1.5+math.floor(max_bin/bin_width))*bin_width,bin_width))
 
-        plt.ylabel('Count')
-        plt.xlabel(xlabel)
-        plt.savefig(filename,dpi=300)
-        plt.close()
+    plt.ylabel('Count')
+    plt.xlabel(xlabel)
+    plt.savefig(filename,dpi=300)
+    plt.close()
 
 
 class RF_Model():
@@ -105,9 +106,9 @@ class RF_Model():
         
         ### Create directories for target ###
     
-        self.models_target_path = '%s/models_%s'%(models_path, self.target)
+        self.models_target_path = '%s/models_%s'%(models_base_path, self.target)
         self.validation_target_path = '%s/validation_%s'%(validation_path, self.target)
-        # self.scatter_plots_path = '%s/scatter_plots_%s'%(models_path, self.target)
+        # self.scatter_plots_path = '%s/scatter_plots_%s'%(models_base_path, self.target)
 
         for dirname in [self.models_target_path, self.validation_target_path]:
             if not os.path.exists(dirname):
@@ -128,12 +129,86 @@ class RF_Model():
         # definition of the output of the ML model 
         self.y_unscaled = self.df[self.feature_names].values
 
-    def train(self, base_path = None, rs = None):
-        
-        if not base_path:
-            base_path = self.models_target_path
+    def train_model(self, train_idx, val_idx, model_filename):
 
-        kf = KFold(n_splits = 10, shuffle = True, random_state = rs)
+        # Divide the output in train and validation data
+        y_train, y_val = self.y[train_idx], self.y[val_idx]
+        
+        # Divide the input in train and validation data set
+        x_train, x_val = self.x[train_idx], self.x[val_idx]
+
+        # Print final training and validation data dimensions 
+        print("   ---   Training and validation data dimensions:")
+        print(x_train.shape,x_val.shape,y_train.shape, y_val.shape)
+
+        # Initiate and fit the RandomForestRegressor model 
+                    
+        model = self.rf_model
+
+        if self.n_feat == 1:
+            model.fit(x_train,y_train.ravel())
+        else:
+            model.fit(x_train,y_train)
+
+        # save the model
+        joblib.dump(model, model_filename)
+
+        # evaluate the performance of the fitted model over training and validation data set
+
+        y_pred_train = model.predict(x_train).reshape(-1, self.n_feat)
+        y_pred_val = model.predict(x_val).reshape(-1, self.n_feat)
+        #y_pred_test = model.predict(x_test).reshape(-1, self.n_feat)
+
+        if self.regression:
+            print("\n   ###   RandomForestRegressor:")
+            if self.n_feat == 1:
+                r2_GBR_train, mae_GBR_train, rmse_GBR_train = reg_stats(y_train, y_pred_train, self.y_scaler)
+                print("   ---   Training (r2, MAE, RMSE):   %.3f %.3f %.3f"%(r2_GBR_train, mae_GBR_train, rmse_GBR_train))
+                r2_GBR_val, mae_GBR_val, rmse_GBR_val = reg_stats(y_val, y_pred_val, self.y_scaler)
+                print("   ---   Validating (r2, MAE, RMSE): %.3f %.3f %.3f"%(r2_GBR_val, mae_GBR_val, rmse_GBR_val))
+         #       r2_GBR_test, mae_GBR_test, rmse_GBR_test = reg_stats(y_test, y_pred_test, self.y_scaler)
+         #       print("   ---   Testing (r2, MAE, RMSE):    %.3f %.3f %.3f"%(r2_GBR_test, mae_GBR_test, rmse_GBR_test))
+            else: 
+                r2_GBR_train, mae_GBR_train, rmse_GBR_train = reg_stats(y_train, y_pred_train)
+                print("   ---   Training (r2, MAE, RMSE):   %.3f"%r2_GBR_train)
+                r2_GBR_val, mae_GBR_val, rmse_GBR_val = reg_stats(y_val, y_pred_val)
+                print("   ---   Validating (r2, MAE, RMSE): %.3f"%r2_GBR_val)
+         #       r2_GBR_test, mae_GBR_test, rmse_GBR_test = reg_stats(y_test, y_pred_test)
+         #       print("   ---   Testing (r2, MAE, RMSE):    %.3f"%r2_GBR_test)
+
+        ### Adapt scatter plots to regression / classification
+
+        # scale back the output
+
+        # y_val_unscaled = y_scaler.inverse_transform(y_val)
+        # y_train_unscaled = y_scaler.inverse_transform(y_train)
+        # y_pred_val_unscaled = y_scaler.inverse_transform(y_pred_val)
+        # y_pred_train_unscaled = y_scaler.inverse_transform(y_pred_train)
+
+        # save and plot of the predictions
+
+        # plt.figure()
+        # plt.scatter(y_pred_train_unscaled, y_train_unscaled, marker="o", c="C1", label="Training: r$^2$ = %.3f"%(r2_GBR_train))
+        # plt.scatter(y_pred_val_unscaled, y_val_unscaled, marker="o", c="C2", label="Testing: r$^2$ = %.3f"%(r2_GBR_val))
+        # plt.scatter(y_pred_train_unscaled, y_train_unscaled, marker="o", c="C1", label="Training: MAE = %.3f"%(mae_GBR_train))
+        # plt.scatter(y_pred_val_unscaled, y_val_unscaled, marker="o", c="C2", label="Testing: MAE = %.3f"%(mae_GBR_val))
+        # plt.plot(y_train_unscaled,y_train_unscaled)
+        # plt.title('RandomForestRegressor')
+
+        # plt.ylabel("Experimental %s [%s]"%(target.capitalize(),target_unit))
+        # plt.xlabel("Predicted %s [%s]"%(target.capitalize(),target_unit))
+        # plt.legend(loc="upper left")
+        # plt.savefig('%s/full_data_RFR_%02i_%02i.png'%(self.scatter_plots_path, count_ext, count_int), dpi=300)
+        # plt.close()
+                
+    def validate(self):
+        
+        models_path = '%s/models/'%self.validation_target_path
+        if not os.path.exists(models_path):
+            os.makedirs(models_path)
+
+        csv_file = '%s/error_list_RF%s.csv'%(self.validation_target_path,self.model_type[0].capitalize())
+        histogram_file = '%s/error_histogram_RF%s.png'%(self.validation_target_path,self.model_type[0].capitalize())
 
         # Divide the full data in 10 sets with each 10% test and 90% train/validation set
         count_ext = 1
@@ -147,162 +222,51 @@ class RF_Model():
                 train_idx = np.array([train_val_idx[i] for i in train_idx])
                 val_idx = np.array([train_val_idx[i] for i in val_idx])
 
-                RFR_basepath = '%s/random_forest_%s_model_%02i_%02i'%(base_path, self.model_type, count_ext, count_int)
-                if not os.path.exists('%s.joblib'%RFR_basepath):
+                model_filename = '%s/random_forest_%s_model_%02i_%02i.joblib'%(models_path, self.model_type, count_ext, count_int)
 
-                    print("\nStart training of %s model %2i for cross validation set %2i"%(self.target,count_int, count_ext))
+                if not os.path.exists(model_filename):
+                    print("\nStart training of %s validation model %2i for cross validation set %2i"%(self.target,count_int, count_ext))
+                    self.train_model(train_idx, val_idx, model_filename)
 
-                    # Divide the output in train and validation data
-                    y_train, y_val = self.y[train_idx], self.y[val_idx]
-        
-                    # Divide the input in train and validation data set
-                    x_train, x_val = self.x[train_idx], self.x[val_idx]
-
-                    # Print final training and validation data dimensions 
-                    print("   ---   Training and validation data dimensions:")
-                    print(x_train.shape,x_val.shape,y_train.shape, y_val.shape)
-
-                    # Initiate and fit the RandomForestRegressor model 
-                    
-                    model = self.rf_model
-
-                    if self.n_feat == 1:
-                        model.fit(x_train,y_train.ravel())
-                    else:
-                        model.fit(x_train,y_train)
-
-                    # save the model
-                    joblib.dump(model, '%s.joblib'%RFR_basepath)
-
-                    # evaluate the performance of the fitted model over training and validation data set
-
-                    y_pred_train = model.predict(x_train).reshape(-1, self.n_feat)
-                    y_pred_val = model.predict(x_val).reshape(-1, self.n_feat)
-                    y_pred_test = model.predict(x_test).reshape(-1, self.n_feat)
-
-                    if self.regression:
-                        print("\n   ###   RandomForestRegressor:")
-                        if self.n_feat == 1:
-                            r2_GBR_train, mae_GBR_train, rmse_GBR_train = reg_stats(y_train, y_pred_train, self.y_scaler)
-                            print("   ---   Training (r2, MAE, RMSE):   %.3f %.3f %.3f"%(r2_GBR_train, mae_GBR_train, rmse_GBR_train))
-                            r2_GBR_val, mae_GBR_val, rmse_GBR_val = reg_stats(y_val, y_pred_val, self.y_scaler)
-                            print("   ---   Validating (r2, MAE, RMSE): %.3f %.3f %.3f"%(r2_GBR_val, mae_GBR_val, rmse_GBR_val))
-                            r2_GBR_test, mae_GBR_test, rmse_GBR_test = reg_stats(y_test, y_pred_test, self.y_scaler)
-                            print("   ---   Testing (r2, MAE, RMSE):    %.3f %.3f %.3f"%(r2_GBR_test, mae_GBR_test, rmse_GBR_test))
-                        else: 
-                            r2_GBR_train, mae_GBR_train, rmse_GBR_train = reg_stats(y_train, y_pred_train)
-                            print("   ---   Training (r2, MAE, RMSE):   %.3f"%r2_GBR_train)
-                            r2_GBR_val, mae_GBR_val, rmse_GBR_val = reg_stats(y_val, y_pred_val)
-                            print("   ---   Validating (r2, MAE, RMSE): %.3f"%r2_GBR_val)
-                            r2_GBR_test, mae_GBR_test, rmse_GBR_test = reg_stats(y_test, y_pred_test)
-                            print("   ---   Testing (r2, MAE, RMSE):    %.3f"%r2_GBR_test)
-
-                    ### Adapt scatter plots to regression / classification
-
-                    # scale back the output
-
-                    # y_val_unscaled = y_scaler.inverse_transform(y_val)
-                    # y_train_unscaled = y_scaler.inverse_transform(y_train)
-                    # y_pred_val_unscaled = y_scaler.inverse_transform(y_pred_val)
-                    # y_pred_train_unscaled = y_scaler.inverse_transform(y_pred_train)
-
-                    # save and plot of the predictions
-
-                    # plt.figure()
-                    # plt.scatter(y_pred_train_unscaled, y_train_unscaled, marker="o", c="C1", label="Training: r$^2$ = %.3f"%(r2_GBR_train))
-                    # plt.scatter(y_pred_val_unscaled, y_val_unscaled, marker="o", c="C2", label="Testing: r$^2$ = %.3f"%(r2_GBR_val))
-                    # plt.scatter(y_pred_train_unscaled, y_train_unscaled, marker="o", c="C1", label="Training: MAE = %.3f"%(mae_GBR_train))
-                    # plt.scatter(y_pred_val_unscaled, y_val_unscaled, marker="o", c="C2", label="Testing: MAE = %.3f"%(mae_GBR_val))
-                    # plt.plot(y_train_unscaled,y_train_unscaled)
-                    # plt.title('RandomForestRegressor')
-
-                    # plt.ylabel("Experimental %s [%s]"%(target.capitalize(),target_unit))
-                    # plt.xlabel("Predicted %s [%s]"%(target.capitalize(),target_unit))
-                    # plt.legend(loc="upper left")
-                    # plt.savefig('%s/full_data_RFR_%02i_%02i.png'%(self.scatter_plots_path, count_ext, count_int), dpi=300)
-                    # plt.close()
-            
                 count_int += 1
         
             count_ext += 1
 
-    def validate(self):
-        for rs in [453, 7644, 24369, 42548, 86310, 273214, 358412, 414551, 712111, 983187]:
+        if not os.path.exists(csv_file) or not os.path.exists(histogram_file):
 
-            models_rs_path = '/%s/models_rs_%06i'%(self.validation_target_path, rs)
-            if not os.path.exists(models_rs_path):
-                os.makedirs(models_rs_path)
+            y_pred_test_all = []
+            count_ext = 1
 
-            self.train(base_path = models_rs_path, rs = rs)
-
-            rs_csv_file = '%s/std_list_rs_%06i_split_RFR.csv'%(self.validation_target_path, rs)
-            rs_hist_file = '%s/std_histogram_rs_%06i_split_RFR.png'%(self.validation_target_path, rs)
-
-            if not os.path.exists(rs_csv_file) or not os.path.exists(rs_hist_file):
-
-                kf = KFold(n_splits = 10, shuffle = True, random_state = rs)
-                y_pred_test_all = []
-                count_ext = 1
-
-                for train_val_idx, test_idx in kf.split(self.all_indices):
-                    x_test = self.x[test_idx]
-                    y_pred_test_set = []
-                    count_int = 1
-
-                    for train_idx, val_idx in kf.split(train_val_idx):
-                        train_idx = np.array([train_val_idx[i] for i in train_idx])
-                        val_idx = np.array([train_val_idx[i] for i in val_idx])
-
-                        y_val = self.y[val_idx]
-                        x_val = self.x[val_idx]
-
-                        # print("\nLoad %s model %2i for cross validation set %2i"%(target, count_int, count_ext))
-                        model = joblib.load('%s/random_forest_%s_model_%02i_%02i.joblib'%(models_rs_path, self.model_type, count_ext, count_int))
+            for train_val_idx, test_idx in kf.split(self.all_indices):
         
-                        # prediction for independent test split
-                        y_pred_test = model.predict(x_test).reshape(-1, self.n_feat)
-                        if self.regression:
-                            y_pred_test_unscaled = self.y_scaler.inverse_transform(y_pred_test)
-                            y_pred_test_set.append(y_pred_test_unscaled)
-                        else:
-                            y_pred_test_set.append(y_pred_test)
+                x_test = self.x[test_idx]
+                y_pred_test_set = []
+                count_int = 1
 
-                        count_int += 1
+                for train_idx, val_idx in kf.split(train_val_idx):
+                    train_idx = np.array([train_val_idx[i] for i in train_idx])
+                    val_idx = np.array([train_val_idx[i] for i in val_idx])
 
-                    y_pred_test_all.append([test_idx, y_pred_test_set])
+                    y_val = self.y[val_idx]
+                    x_val = self.x[val_idx]
+                
+                    model = joblib.load('%s/random_forest_%s_model_%02i_%02i.joblib'%(models_path, self.model_type, count_ext, count_int))
 
-                    count_ext += 1
+                    y_pred_test = model.predict(x_test).reshape(-1, self.n_feat)
+                    
+                    if self.regression:
+                        y_pred_test_unscaled = self.y_scaler.inverse_transform(y_pred_test)
+                        y_pred_test_set.append(y_pred_test_unscaled)
+                    else:
+                        y_pred_test_set.append(y_pred_test)
 
-                self.make_validation_histogram(y_pred_test_all, rs_csv_file, rs_hist_file) # define method in subclass depending on property
+                    count_int += 1
 
-        scatter_plot_file = '%s/std_scatter_plots_10_splits_%s.png'%(self.validation_target_path, self.target)
+                y_pred_test_all.append([test_idx, y_pred_test_set])
 
-        if not os.path.exists(scatter_plot_file):
+                count_ext += 1
 
-            csv_files = glob.glob('%s/std_list_rs*.csv'%self.validation_target_path)    
-
-            with open(csv_files[0]) as infile:
-                csv_lines=infile.readlines()[1:]
-                names=[line.split(',')[0] for line in csv_lines]
-                error_values=[[float(line.split(',')[1].rstrip()) for line in  csv_lines]]
-        
-            for csv_file in csv_files[1:]:
-                with open(csv_file) as infile:
-                    csv_lines=infile.readlines()[1:]
-                    error_values.append([float(line.split(',')[1].rstrip()) for line in  csv_lines])
-
-            xval = range(len(names))
-
-            plt.figure()
-            plt.title('%s prediction error of different KFold splits for all structures'%self.target.capitalize())
-            plt.ylabel("Error")
-            plt.xlabel("Structure no.")
-
-            for i in range(len(error_values)):
-                yval = [error_values[i][j] for j in range(len(xval))]
-                plt.scatter(xval,yval, marker="o",s=6)
-
-            plt.savefig(scatter_plot_file, dpi=300)
+            self.make_validation_histogram(y_pred_test_all, csv_file, histogram_file) # define method in subclass depending on property
 
     def make_predictions(self, MOF_random_name, df_new):
 
@@ -311,33 +275,26 @@ class RF_Model():
         x_new_unscaled = df_new[features_basic].values
         x_new_scaled = self.x_scaler_feat.transform(x_new_unscaled).reshape(1, -1)
 
-        kf = KFold(n_splits = 10, shuffle = True, random_state = None)
+        count = 1
+        for train_idx, val_idx in kf.split(self.all_indices):
 
-        count_ext = 1
-        for train_val_idx, test_idx in kf.split(self.all_indices):
-            single_prediction_set = []
+            model_filename = '%s/random_forest_%s_model_%02i.joblib'%(self.models_target_path, self.model_type, count)
 
-            count_int = 1
-            for train_idx, val_idx in kf.split(train_val_idx):
-                train_idx = np.array([train_val_idx[i] for i in train_idx])
-                val_idx = np.array([train_val_idx[i] for i in val_idx])
+            if not os.path.exists(model_filename):
+                print('\nStart training of %s prediction model %2i'%(self.target, count))
+                self.train_model(train_idx, val_idx, model_filename)
 
-                RFR_basepath = '%s/random_forest_%s_model_%02i_%02i'%(self.models_target_path, self.model_type, count_ext, count_int)
+            model = joblib.load(model_filename)
 
-                model = joblib.load('%s.joblib'%RFR_basepath)
-                y_new_pred = model.predict(x_new_scaled).reshape(-1, self.n_feat)
+            y_new_pred = model.predict(x_new_scaled).reshape(-1, self.n_feat)
                 
-                if self.regression:
-                    y_new_pred_unscaled = self.y_scaler.inverse_transform(y_new_pred)
-                    single_prediction_set.append(y_new_pred_unscaled[0])
-                else:
-                    single_prediction_set.append(y_new_pred[0])
+            if self.regression:
+                y_new_pred_unscaled = self.y_scaler.inverse_transform(y_new_pred)
+                single_predictions.append(y_new_pred_unscaled[0])
+            else:
+                single_predictions.append(y_new_pred[0])
 
-                count_int += 1
-
-            single_predictions.append(single_prediction_set)
-            
-            count_ext += 1
+            count += 1
 
         self.single_predictions = np.array(single_predictions)
 
@@ -389,13 +346,21 @@ class Additive_Model(Classification_Model):
 
     def get_final_prediction(self):
 
-        additive_categories = {0:'Base', 1:'Neutral/no additive', 2:'Acid'}
+        additive_categories = {0:'Base', 1:'Neutral/none', 2:'Acid'}
 
         final_prediction = np.bincount(self.single_predictions.ravel()).argmax()
-        return_string = additive_categories[final_prediction]
-        print ('ML Predicted %s: %s'%(self.target.capitalize(), return_string))
+        n_final_prediction = np.bincount(self.single_predictions.ravel())[final_prediction]
+        
+        if n_final_prediction >= 10:
+            certainty = 'high'
+        elif n_final_prediction >= 9:
+            certainty = 'medium'
+        else: 
+            certainty = 'low'
 
-        return(return_string)
+        print ('ML Predicted %s: %s (%s certainty prediction)'%(self.target.capitalize(), additive_categories[final_prediction], certainty))
+
+        return([additive_categories[final_prediction], certainty])
 
     def make_validation_histogram(self, y_pred_test_all, csv_file, hist_file):
 
@@ -407,7 +372,7 @@ class Additive_Model(Classification_Model):
             filenames += [self.df['filename'].iloc[idx] for idx in y_pred_set[0]]
 
         filenames, correct_pred = zip(*sorted(zip(filenames, correct_pred)))
-
+        
         with open(csv_file,'w') as outfile:
             outfile.write('filename, correct predictions\n')
             for i in range(len(correct_pred)):
@@ -429,13 +394,22 @@ class Solvent_Model(Regression_Model):
         solvent_names = pd.read_csv("%s/additional_data/local_solvent_full.csv"%(startpath))['solvent_name']
         solvent_data = np.loadtxt('%s/additional_data/scaled_five_parameter_local_solvent.dat'%startpath)
 
-        centroid = [np.average([single_prediction[i] for single_prediction in self.single_predictions.reshape(-1, self.n_feat)]) for i in range(self.n_feat)]
+        centroid = [np.average([self.single_predictions[j][i] for j in range(len(self.single_predictions))]) for i in range(self.n_feat)]
+        centroid_std = np.sqrt(sum([(self.single_predictions[i][j]-centroid[j])**2 for j in range(self.n_feat) for i in range(len(self.single_predictions))]))/len(self.single_predictions)
         centroid_distances = [np.sqrt(sum([(centroid[j]-solvent_data[i][j])**2 for j in range(len(centroid))])) for i in range(len(solvent_data))]
-
         solvent_order = np.argsort(centroid_distances)
-        print('ML Predicted Best 5 %ss: %s'%(self.target.capitalize(),', '.join([solvent_names[solvent_order[i]] for i in range(5)])))
 
-        return(solvent_names[solvent_order[0]])
+        if centroid_std <= 0.05:
+            certainty = 'high'
+        elif centroid_std <= 0.1:
+            certainty = 'medium'
+        else: 
+            certainty = 'low'
+
+        n_solvents = 5
+        print('ML Predicted Best %i %ss: %s (%s certainty prediction)'%(n_solvents, self.target.capitalize(),', '.join([solvent_names[solvent_order[i]] for i in range(n_solvents)]),certainty))
+
+        return([solvent_names[solvent_order[0]],certainty])
 
     def make_validation_histogram(self, y_pred_test_all, csv_file, hist_file):
 
@@ -449,11 +423,13 @@ class Solvent_Model(Regression_Model):
 
         filenames, std = zip(*sorted(zip(filenames, centroid_dist)))
 
+        #for p in range(60,100,5):
+        #    print('%2i percentile: %2.3f'%(p,np.percentile(std,p)))
+
         with open(csv_file,'w') as outfile:
             outfile.write('filename, centroid distance\n')
             for i in range(len(centroid_dist)):
                 outfile.write('%s, %s\n'%(filenames[i], centroid_dist[i]))
-
                 
         make_histogram(centroid_dist, 0.01, 'Distances from centroid of the scaled %s models'%self.target, hist_file)
 
@@ -471,10 +447,19 @@ class TT_Model(Regression_Model):
     def get_final_prediction(self):
 
         final_prediction = int(np.rint(np.average(self.single_predictions)))
-        return_string = str(final_prediction)
-        print ('ML Predicted %s: %3i %s'%(self.target.capitalize(), final_prediction, self.target_unit))
+        std = np.std(self.single_predictions)
+        
+        if std <= 3.0:
+            certainty = 'high'
+        elif std <= 7.0:
+            certainty = 'medium'
+        else: 
+            certainty = 'low'
 
-        return(return_string)
+        print ('ML Predicted %s: %i %s (%s certainty prediction)'%(self.target.capitalize(), final_prediction, self.target_unit, certainty))
+
+        return([str(final_prediction), certainty])
+
 
     def make_validation_histogram(self, y_pred_test_all, csv_file, hist_file):
         
@@ -485,6 +470,9 @@ class TT_Model(Regression_Model):
             filenames += [self.df['filename'].iloc[idx] for idx in y_pred_set[0]]
 
         filenames, std = zip(*sorted(zip(filenames, std)))
+
+        #for p in range(60,100,5):
+        #    print('%2i percentile: %2.3f'%(p,np.percentile(std,p)))
 
         with open(csv_file,'w') as outfile:
             outfile.write('filename, std\n')

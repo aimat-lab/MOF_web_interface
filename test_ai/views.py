@@ -31,7 +31,7 @@ def upload(request):
 
         try:
             predictions = do_all.do_all("%s/temp_cif_files/%s"%(startpath, cif_filename), startpath)
-            result = {'file_content': file_content, 'predictions': predictions, 'temperature': predictions[0], 'time': predictions[1], 'solvent': predictions[2], 'additive': predictions[3]}
+            result = {'file_content': file_content, 'predictions': predictions,'temperature': predictions[0][0], 'time': predictions[1][0], 'solvent': predictions[2][0], 'additive': predictions[3][0], 'temperature_cert': predictions[0][1], 'time_cert': predictions[1][1], 'solvent_cert': predictions[2][1], 'additive_cert': predictions[3][1]}
         except KeyboardInterrupt:
             raise KeyboardInterrupt
         except Exception as e:
