@@ -38,7 +38,7 @@ def upload(request):
             print(str(e))
             print("The AI threw an error!")
             result = {'file_content': "ERROR", 'predictions': "ERROR", 'temperature': "ERROR",
-             'time': "ERROR", 'solvent': "ERROR", 'additive': "ERROR"}
+                    'time': "ERROR", 'solvent': "ERROR", 'additive': "ERROR", 'temperature_cert': 'ERROR', 'solvent_cert': 'ERROR', 'additive_cert': 'ERROR', 'time_cert': 'ERROR'}
 
     return render(request, 'test_ai/upload.html', result)
 
