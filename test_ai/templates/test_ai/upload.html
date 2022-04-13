@@ -37,6 +37,7 @@
             <div style="height: 60px"></div>
 	    <table>
 		    <tr>
+		<td>
             {% if temperature %}
 	    <h3>Temperature: {{ temperature }} °C ({{ temperature_cert }} certainty prediction)</h3>
                 <div class="image_container">
@@ -44,8 +45,8 @@
                 </div>
                 <br>
             {% endif %}
-		    </tr>
-		    <tr>
+		    </td>
+		    <td>
             {% if time %}
                 <h3>Time: {{ time }} hours ({{ time_cert }} certainty prediction)</h3>
                 <div class="image_container">
@@ -53,8 +54,8 @@
                 </div>
                 <br>
             {% endif %}
-		    </tr>
-		    <tr>
+		    </td>
+		    <td>
             {% if solvent %}
                 <h3>Solvent: {{ solvent }} ({{ solvent_cert }} certainty prediction)</h3>
                 <div class="image_container">
@@ -62,8 +63,8 @@
                 </div>
                 <br>
             {% endif %}
-		    </tr>
-		    <tr>
+		    </td>
+		    <td>
             {% if additive %}
                 <h3>Additive: {{ additive }} ({{ additive_cert }} certainty prediction)</h3>
                 <div class="image_container">
@@ -71,6 +72,7 @@
                 </div>
                 <br>
             {% endif %}
+	    		</td>
 		    </tr>
 	    </table>
         </div>

@@ -299,7 +299,7 @@ class RF_Model():
         self.single_predictions = np.array(single_predictions)
 
         # Write all predictions to a file
-        # np.savetxt('%s/%s_%s_prediction.dat'%(predictions_path, MOF_random_name, self.target), self.single_predictions)
+        np.savetxt('%s/%s_%s_prediction.dat'%(predictions_path, MOF_random_name, self.target), self.single_predictions)
 
 
 class Classification_Model(RF_Model):

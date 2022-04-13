@@ -19,17 +19,17 @@ def do_all(cif_filename, startpath = None):
 
     ### Initialise the ML models (train and validate if necessary)
 
-    Temperature_Model = MOF_prediction_models.TT_Model(target = 'temperature', target_unit = '°C')
-    Temperature_Model.validate()
+    Temperature_Model = MOF_prediction_models.TT_Model(target = 'temperature', target_unit = 'C')
+    # Temperature_Model.validate()
 
     Time_Model = MOF_prediction_models.TT_Model(target = 'time', target_unit = 'h')
-    Time_Model.validate()
+    # Time_Model.validate()
 
     Additive_Model = MOF_prediction_models.Additive_Model()
-    Additive_Model.validate()
+    # Additive_Model.validate()
 
     Solvent_Model = MOF_prediction_models.Solvent_Model()
-    Solvent_Model.validate()
+    # Solvent_Model.validate()
 
     ### Predict synthesis conditions if a cif file was given
 
@@ -56,7 +56,7 @@ def do_all(cif_filename, startpath = None):
             if not os.path.exists("%s/cif_files/%s"%(startpath, MOF_random_name)):
                 os.makedirs("%s/cif_files/%s"%(startpath, MOF_random_name))
             ### Copy the downloaded cif file to the cif directory
-            shutil.copy(cif_filename, f'{startpath}/cif_files/{MOF_random_name}/mof.cif')
+            shutil.copy(cif_filename, '%s/cif_files/%s/mof.cif'%(startpath, MOF_random_name))
         else:
             print("ERROR: file not found: %s"%(cif_filename))
             return(None, None, None, None)
@@ -83,5 +83,4 @@ if __name__ == "__main__":
         cif_filename = None
 
     [temperature, time, solvent, additive_string] = do_all(cif_filename)
-    print(temperature)
 
