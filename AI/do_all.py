@@ -17,7 +17,8 @@ except:
 
 def do_all(cif_filename, startpath = None):
 
-    MOF_prediction_models.set_startpath(startpath)
+    if startpath:
+        MOF_prediction_models.set_startpath(startpath)
 
     ### Initialise the ML models (train and validate if necessary)
 
