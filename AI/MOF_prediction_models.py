@@ -403,6 +403,7 @@ class Solvent_Model(Regression_Model):
 
     def get_final_prediction(self):
         solvent_names = pd.read_csv("%s/additional_data/local_solvent_full.csv"%(startpath))['solvent_name']
+        solvent_names_html = pd.read_csv("%s/additional_data/local_solvent_full.csv"%(startpath))['solvent_name_html']
         solvent_data = np.loadtxt('%s/additional_data/scaled_five_parameter_local_solvent.dat'%startpath)
 
         centroid = [np.average([self.single_predictions[j][i] for j in range(len(self.single_predictions))]) for i in range(self.n_feat)]
@@ -420,7 +421,7 @@ class Solvent_Model(Regression_Model):
         n_solvents = 5
         print('ML Predicted Best %i %ss: %s (%s certainty prediction)'%(n_solvents, self.target.capitalize(),', '.join([solvent_names[solvent_order[i]] for i in range(n_solvents)]),certainty))
 
-        return([solvent_names[solvent_order[0]],certainty])
+        return([solvent_names_html[solvent_order[0]],certainty])
 
     def make_validation_histogram(self, y_pred_test_all, csv_file, hist_file):
 
