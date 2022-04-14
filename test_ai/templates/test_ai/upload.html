@@ -35,46 +35,52 @@
             <div style="height: 60px"></div>
             The results will be printed below. The calculation might take a few seconds.
             <div style="height: 60px"></div>
-	    <table>
-		    <tr>
+	    <table><tr>
 		<td>
-            {% if temperature %}
-	    <h3>Temperature: {{ temperature }} °C ({{ temperature_cert }} certainty prediction)</h3>
-                <div class="image_container">
-                    <img src="{% static 'test_ai/icon_temperature.png' %}" alt="icon temperature" width="81">
-                </div>
-                <br>
-            {% endif %}
-		    </td>
-		    <td>
-            {% if time %}
-                <h3>Time: {{ time }} hours ({{ time_cert }} certainty prediction)</h3>
-                <div class="image_container">
-                    <img src="{% static 'test_ai/icon_time.png' %}" alt="icon time" width="81">
-                </div>
-                <br>
-            {% endif %}
-		    </td>
-		    <td>
-            {% if solvent %}
-                <h3>Solvent: {{ solvent }} ({{ solvent_cert }} certainty prediction)</h3>
-                <div class="image_container">
-                    <img src="{% static 'test_ai/icon_solvent.png' %}" alt="icon solvent" width="81">
-                </div>
-                <br>
-            {% endif %}
-		    </td>
-		    <td>
-            {% if additive %}
-                <h3>Additive: {{ additive }} ({{ additive_cert }} certainty prediction)</h3>
-                <div class="image_container">
-                    <img src="{% static 'test_ai/icon_additive.png' %}" alt="icon additive" width="81">
-                </div>
-                <br>
-            {% endif %}
-	    		</td>
-		    </tr>
-	    </table>
+                {% if temperature %}
+	    	    <div style="display:inline-block;vertical-align:top">
+                        <img src="{% static 'test_ai/icon_temperature.png' %}" alt="icon temperature" width="81">
+                    </div>
+		    <div style="display:inline-block;vertical-align:top" >
+	    		<h3>Temperature: {{ temperature }} °C </h3>
+	    		({{ temperature_cert }} certainty prediction)
+		    </div>
+                {% endif %}
+	    	</td>
+		<td>
+                {% if time %}
+	    	    <div style="display:inline-block;vertical-align:top">
+                        <img src="{% static 'test_ai/icon_time.png' %}" alt="icon time" width="81">
+                    </div>
+		    <div style="display:inline-block;vertical-align:top" >
+	    		<h3>Time: {{ time }} h </h3>
+	    		({{ time_cert }} certainty prediction)
+		    </div>
+                {% endif %}
+	    	</td>
+		<td>
+                {% if solvent %}
+	    	    <div style="display:inline-block;vertical-align:top">
+                        <img src="{% static 'test_ai/icon_solvent.png' %}" alt="icon solvent" width="81">
+                    </div>
+		    <div style="display:inline-block;vertical-align:top" >
+	    		<h3>Solvent: {{ solvent }} </h3>
+	    		({{ solvent_cert }} certainty prediction)
+		    </div>
+                {% endif %}
+	    	</td>
+		<td>
+                {% if additive %}
+	    	    <div style="display:inline-block;vertical-align:top">
+                        <img src="{% static 'test_ai/icon_additive.png' %}" alt="icon additive" width="81">
+                    </div>
+		    <div style="display:inline-block;vertical-align:top" >
+	    		<h3>Additive: {{ additive }} </h3>
+	    		({{ additive_cert }} certainty prediction)
+		    </div>
+                {% endif %}
+	    	</td>
+	    </tr></table>
         </div>
     </body>
 </html>

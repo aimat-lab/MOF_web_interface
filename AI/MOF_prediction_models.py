@@ -35,21 +35,20 @@ import yaml
 
 ### Set global variables ###
 
-features_basic=["f-chi-0-all","f-chi-1-all","f-chi-2-all","f-chi-3-all","f-Z-0-all","f-Z-1-all","f-Z-2-all","f-Z-3-all","f-I-0-all","f-I-1-all","f-I-2-all","f-I-3-all","f-T-0-all","f-T-1-all","f-T-2-all","f-T-3-all","f-S-0-all","f-S-1-all","f-S-2-all","f-S-3-all","mc-chi-0-all","mc-chi-1-all","mc-chi-2-all","mc-chi-3-all","mc-Z-0-all","mc-Z-1-all","mc-Z-2-all","mc-Z-3-all","mc-I-0-all","mc-I-1-all","mc-I-2-all","mc-I-3-all","mc-T-0-all","mc-T-1-all","mc-T-2-all","mc-T-3-all","mc-S-0-all","mc-S-1-all","mc-S-2-all","mc-S-3-all","D_mc-chi-0-all","D_mc-chi-1-all","D_mc-chi-2-all","D_mc-chi-3-all","D_mc-Z-0-all","D_mc-Z-1-all","D_mc-Z-2-all","D_mc-Z-3-all","D_mc-I-0-all","D_mc-I-1-all","D_mc-I-2-all","D_mc-I-3-all","D_mc-T-0-all","D_mc-T-1-all","D_mc-T-2-all","D_mc-T-3-all","D_mc-S-0-all","D_mc-S-1-all","D_mc-S-2-all","D_mc-S-3-all","f-lig-chi-0","f-lig-chi-1","f-lig-chi-2","f-lig-chi-3","f-lig-Z-0","f-lig-Z-1","f-lig-Z-2","f-lig-Z-3","f-lig-I-0","f-lig-I-1","f-lig-I-2","f-lig-I-3","f-lig-T-0","f-lig-T-1","f-lig-T-2","f-lig-T-3","f-lig-S-0","f-lig-S-1","f-lig-S-2","f-lig-S-3","lc-chi-0-all","lc-chi-1-all","lc-chi-2-all","lc-chi-3-all","lc-Z-0-all","lc-Z-1-all","lc-Z-2-all","lc-Z-3-all","lc-I-0-all","lc-I-1-all","lc-I-2-all","lc-I-3-all","lc-T-0-all","lc-T-1-all","lc-T-2-all","lc-T-3-all","lc-S-0-all","lc-S-1-all","lc-S-2-all","lc-S-3-all","lc-alpha-0-all","lc-alpha-1-all","lc-alpha-2-all","lc-alpha-3-all","D_lc-chi-0-all","D_lc-chi-1-all","D_lc-chi-2-all","D_lc-chi-3-all","D_lc-Z-0-all","D_lc-Z-1-all","D_lc-Z-2-all","D_lc-Z-3-all","D_lc-I-0-all","D_lc-I-1-all","D_lc-I-2-all","D_lc-I-3-all","D_lc-T-0-all","D_lc-T-1-all","D_lc-T-2-all","D_lc-T-3-all","D_lc-S-0-all","D_lc-S-1-all","D_lc-S-2-all","D_lc-S-3-all","D_lc-alpha-0-all","D_lc-alpha-1-all","D_lc-alpha-2-all","D_lc-alpha-3-all","func-chi-0-all","func-chi-1-all","func-chi-2-all","func-chi-3-all","func-Z-0-all","func-Z-1-all","func-Z-2-all","func-Z-3-all","func-I-0-all","func-I-1-all","func-I-2-all","func-I-3-all","func-T-0-all","func-T-1-all","func-T-2-all","func-T-3-all","func-S-0-all","func-S-1-all","func-S-2-all","func-S-3-all","func-alpha-0-all","func-alpha-1-all","func-alpha-2-all","func-alpha-3-all","D_func-chi-0-all","D_func-chi-1-all","D_func-chi-2-all","D_func-chi-3-all","D_func-Z-0-all","D_func-Z-1-all","D_func-Z-2-all","D_func-Z-3-all","D_func-I-0-all","D_func-I-1-all","D_func-I-2-all","D_func-I-3-all","D_func-T-0-all","D_func-T-1-all","D_func-T-2-all","D_func-T-3-all","D_func-S-0-all","D_func-S-1-all","D_func-S-2-all","D_func-S-3-all","D_func-alpha-0-all","D_func-alpha-1-all","D_func-alpha-2-all","D_func-alpha-3-all"]
-
-### Create global directories ###
-
 startpath = os.getcwd()
 
-models_base_path = '%s/models'%startpath
-validation_path = '%s/validation'%startpath
-predictions_path = '%s/predictions'%startpath
-
-for dirname in [models_base_path, validation_path, predictions_path]:
-    if not os.path.exists(dirname):
-        os.makedirs(dirname)
+features_basic=["f-chi-0-all","f-chi-1-all","f-chi-2-all","f-chi-3-all","f-Z-0-all","f-Z-1-all","f-Z-2-all","f-Z-3-all","f-I-0-all","f-I-1-all","f-I-2-all","f-I-3-all","f-T-0-all","f-T-1-all","f-T-2-all","f-T-3-all","f-S-0-all","f-S-1-all","f-S-2-all","f-S-3-all","mc-chi-0-all","mc-chi-1-all","mc-chi-2-all","mc-chi-3-all","mc-Z-0-all","mc-Z-1-all","mc-Z-2-all","mc-Z-3-all","mc-I-0-all","mc-I-1-all","mc-I-2-all","mc-I-3-all","mc-T-0-all","mc-T-1-all","mc-T-2-all","mc-T-3-all","mc-S-0-all","mc-S-1-all","mc-S-2-all","mc-S-3-all","D_mc-chi-0-all","D_mc-chi-1-all","D_mc-chi-2-all","D_mc-chi-3-all","D_mc-Z-0-all","D_mc-Z-1-all","D_mc-Z-2-all","D_mc-Z-3-all","D_mc-I-0-all","D_mc-I-1-all","D_mc-I-2-all","D_mc-I-3-all","D_mc-T-0-all","D_mc-T-1-all","D_mc-T-2-all","D_mc-T-3-all","D_mc-S-0-all","D_mc-S-1-all","D_mc-S-2-all","D_mc-S-3-all","f-lig-chi-0","f-lig-chi-1","f-lig-chi-2","f-lig-chi-3","f-lig-Z-0","f-lig-Z-1","f-lig-Z-2","f-lig-Z-3","f-lig-I-0","f-lig-I-1","f-lig-I-2","f-lig-I-3","f-lig-T-0","f-lig-T-1","f-lig-T-2","f-lig-T-3","f-lig-S-0","f-lig-S-1","f-lig-S-2","f-lig-S-3","lc-chi-0-all","lc-chi-1-all","lc-chi-2-all","lc-chi-3-all","lc-Z-0-all","lc-Z-1-all","lc-Z-2-all","lc-Z-3-all","lc-I-0-all","lc-I-1-all","lc-I-2-all","lc-I-3-all","lc-T-0-all","lc-T-1-all","lc-T-2-all","lc-T-3-all","lc-S-0-all","lc-S-1-all","lc-S-2-all","lc-S-3-all","lc-alpha-0-all","lc-alpha-1-all","lc-alpha-2-all","lc-alpha-3-all","D_lc-chi-0-all","D_lc-chi-1-all","D_lc-chi-2-all","D_lc-chi-3-all","D_lc-Z-0-all","D_lc-Z-1-all","D_lc-Z-2-all","D_lc-Z-3-all","D_lc-I-0-all","D_lc-I-1-all","D_lc-I-2-all","D_lc-I-3-all","D_lc-T-0-all","D_lc-T-1-all","D_lc-T-2-all","D_lc-T-3-all","D_lc-S-0-all","D_lc-S-1-all","D_lc-S-2-all","D_lc-S-3-all","D_lc-alpha-0-all","D_lc-alpha-1-all","D_lc-alpha-2-all","D_lc-alpha-3-all","func-chi-0-all","func-chi-1-all","func-chi-2-all","func-chi-3-all","func-Z-0-all","func-Z-1-all","func-Z-2-all","func-Z-3-all","func-I-0-all","func-I-1-all","func-I-2-all","func-I-3-all","func-T-0-all","func-T-1-all","func-T-2-all","func-T-3-all","func-S-0-all","func-S-1-all","func-S-2-all","func-S-3-all","func-alpha-0-all","func-alpha-1-all","func-alpha-2-all","func-alpha-3-all","D_func-chi-0-all","D_func-chi-1-all","D_func-chi-2-all","D_func-chi-3-all","D_func-Z-0-all","D_func-Z-1-all","D_func-Z-2-all","D_func-Z-3-all","D_func-I-0-all","D_func-I-1-all","D_func-I-2-all","D_func-I-3-all","D_func-T-0-all","D_func-T-1-all","D_func-T-2-all","D_func-T-3-all","D_func-S-0-all","D_func-S-1-all","D_func-S-2-all","D_func-S-3-all","D_func-alpha-0-all","D_func-alpha-1-all","D_func-alpha-2-all","D_func-alpha-3-all"]
 
 kf = KFold(n_splits = 10, shuffle = True)
+
+### Set paths and create global directories
+
+def set_startpath(s):
+
+    global startpath 
+
+    startpath = s 
+
 
 ### Define the mean absolute error(mae), root mean squared error (rmse)  and r2 as an output of a function ###
 
@@ -106,15 +105,19 @@ class RF_Model():
         
         ### Create directories for target ###
     
+        models_base_path = '%s/models'%startpath
+
+        if not os.path.exists(models_base_path):
+            os.makedirs(models_base_path)
+
         self.models_target_path = '%s/models_%s'%(models_base_path, self.target)
-        self.validation_target_path = '%s/validation_%s'%(validation_path, self.target)
         # self.scatter_plots_path = '%s/scatter_plots_%s'%(models_base_path, self.target)
 
-        for dirname in [self.models_target_path, self.validation_target_path]:
-            if not os.path.exists(dirname):
-                os.makedirs(dirname)
+        if not os.path.exists(self.models_target_path:
+            os.makedirs(self.models_target_path)
 
         # Prepare data for the ML model according to precomputed features by Kulik et. al. with given input(df) and output("target") #
+        print('%s/datasets/rac_features_%s.csv'%(startpath, self.target),startpath)
         self.df = pd.read_csv('%s/datasets/rac_features_%s.csv'%(startpath, self.target))
         self.all_indices = np.array(self.df.index.tolist())
 
@@ -203,9 +206,13 @@ class RF_Model():
                 
     def validate(self):
         
+        validation_path = '%s/validation'%startpath
+        validation_target_path = '%s/validation_%s'%(validation_path, self.target)
         models_path = '%s/models/'%self.validation_target_path
-        if not os.path.exists(models_path):
-            os.makedirs(models_path)
+
+        for dirname in [validation_path, validation_target_path, models_path]:
+            if not os.path.exists(dirname):
+                os.makedirs(dirname)
 
         csv_file = '%s/error_list_RF%s.csv'%(self.validation_target_path,self.model_type[0].capitalize())
         histogram_file = '%s/error_histogram_RF%s.png'%(self.validation_target_path,self.model_type[0].capitalize())
@@ -299,6 +306,11 @@ class RF_Model():
         self.single_predictions = np.array(single_predictions)
 
         # Write all predictions to a file
+
+        predictions_path = '%s/predictions'%startpath
+        if not os.path.exists(predictions_path):
+            os.makedirs(predictions_path)
+
         np.savetxt('%s/%s_%s_prediction.dat'%(predictions_path, MOF_random_name, self.target), self.single_predictions)
 
 

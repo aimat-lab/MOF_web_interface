@@ -17,6 +17,8 @@ except:
 
 def do_all(cif_filename, startpath = None):
 
+    MOF_prediction_models.set_startpath(startpath)
+
     ### Initialise the ML models (train and validate if necessary)
 
     Temperature_Model = MOF_prediction_models.TT_Model(target = 'temperature', target_unit = 'C')
@@ -25,11 +27,11 @@ def do_all(cif_filename, startpath = None):
     Time_Model = MOF_prediction_models.TT_Model(target = 'time', target_unit = 'h')
     # Time_Model.validate()
 
-    Additive_Model = MOF_prediction_models.Additive_Model()
-    # Additive_Model.validate()
-
     Solvent_Model = MOF_prediction_models.Solvent_Model()
     # Solvent_Model.validate()
+
+    Additive_Model = MOF_prediction_models.Additive_Model()
+    # Additive_Model.validate()
 
     ### Predict synthesis conditions if a cif file was given
 
@@ -66,14 +68,14 @@ def do_all(cif_filename, startpath = None):
         # df_new = pd.read_csv('additional_data/full_featurization_frame.csv')
 
         ### Predictions
-        ML_models = [Temperature_Model, Time_Model, Additive_Model, Solvent_Model]
+        ML_models = [Temperature_Model, Time_Model, Solvent_Model, Additive_Model]
         for model in ML_models:
             model.make_predictions(MOF_random_name, df_new)
 
         return([model.get_final_prediction() for model in ML_models])
 
     else:
-        return(None, None, None, None)
+        return([None for i in range(4)])
 
 if __name__ == "__main__":
 

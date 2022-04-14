@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from AI import do_all
 import os
-
+#import pdb
 
 
 def index(request):
@@ -29,6 +29,7 @@ def upload(request):
         outfile.close()
         print("writing new cif file to %s/temp_cif_files/%s"%(startpath, cif_filename))
 
+        #pdb.set_trace()
         try:
             predictions = do_all.do_all("%s/temp_cif_files/%s"%(startpath, cif_filename), startpath)
             result = {'file_content': file_content, 'predictions': predictions,'temperature': predictions[0][0], 'time': predictions[1][0], 'solvent': predictions[2][0], 'additive': predictions[3][0], 'temperature_cert': predictions[0][1], 'time_cert': predictions[1][1], 'solvent_cert': predictions[2][1], 'additive_cert': predictions[3][1]}
