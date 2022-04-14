@@ -113,7 +113,7 @@ class RF_Model():
         self.models_target_path = '%s/models_%s'%(models_base_path, self.target)
         # self.scatter_plots_path = '%s/scatter_plots_%s'%(models_base_path, self.target)
 
-        if not os.path.exists(self.models_target_path:
+        if not os.path.exists(self.models_target_path):
             os.makedirs(self.models_target_path)
 
         # Prepare data for the ML model according to precomputed features by Kulik et. al. with given input(df) and output("target") #
