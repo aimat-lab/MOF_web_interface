@@ -117,7 +117,6 @@ class RF_Model():
             os.makedirs(self.models_target_path)
 
         # Prepare data for the ML model according to precomputed features by Kulik et. al. with given input(df) and output("target") #
-        print('%s/datasets/rac_features_%s.csv'%(startpath, self.target),startpath)
         self.df = pd.read_csv('%s/datasets/rac_features_%s.csv'%(startpath, self.target))
         self.all_indices = np.array(self.df.index.tolist())
 
