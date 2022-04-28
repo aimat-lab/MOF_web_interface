@@ -25,16 +25,16 @@
         <div class="center">
             <h2>MOF Synthesis prediction</h2>
 	    <p>Choose a cif file to upload:<br>
-            (If you want to test the prediction using MOF-5, you can <a href="{% static 'test_ai/EDUSIF_clean.cif' %}" download="">download a cif file here</a>.)
+            (If you want to test the prediction using MOF-5, you can <a href="{% static 'test_ai/EDUSIF_clean.cif' %}" download="">download a cif file here</a>)
 	    </p>
             <form method="post" enctype="multipart/form-data">
                 {% csrf_token %}
                 <input type="file" name="document">
                 <button type="submit">Predict synthesis conditions</button>
             </form>
-            <div style="height: 30px"></div>
+            <div style="height: 20px"></div>
             The results will be printed below. The calculation might take a few seconds.
-            <div style="height: 60px"></div>
+            <div style="height: 40px"></div>
 	    <table><tr style="padding-bottom:30px">
 		<td style="width:25%">
                 {% if temperature %}
@@ -79,7 +79,15 @@
 		The certainty of the prediction was based on the agreement/disagreement between 10 different models trained on different subsets of the dataset. For comparably high agreement, the prediction certainty is high, for medium agreement the prediction uncertainty increases, and for rather low agreement, we have to assume that the uploaded MOF is very different from the MOFs in the dataset, leading to a relatively high prediction uncertainty.
 		{% endif %}
 		</td>
-	    </tr></table>
+	    </tr>
+	    {% if image %}
+	    <tr>
+		<td colspan="4" style="width:100%;padding-top:20px">
+		<img src="{{ image }}" alt="PCA solvent map" width="400"> 
+		</td>
+	    </tr>
+	    {% endif %
+	    </table>
         </div>
     </body>
 </html>

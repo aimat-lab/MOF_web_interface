@@ -26,12 +26,17 @@ import pandas as pd
 ###########sklearn_libary for ML models###################
 import sklearn
 from sklearn.preprocessing import StandardScaler
+from sklearn.decomposition import PCA
 from sklearn.metrics import r2_score
 from sklearn.ensemble import RandomForestRegressor, RandomForestClassifier
 from sklearn.model_selection import KFold, train_test_split
+from sklearn.cluster import KMeans
 
 #########yaml library to deal with "settings.yml"(containing various parameters) file#############
 import yaml
+
+### stuff for diaplying image in html
+import io, urllib, base64
 
 ### Set global variables ###
 
@@ -421,7 +426,56 @@ class Solvent_Model(Regression_Model):
         n_solvents = 5
         print('ML Predicted Best %i %ss: %s (%s certainty prediction)'%(n_solvents, self.target.capitalize(),', '.join([solvent_names[solvent_order[i]] for i in range(n_solvents)]),certainty))
 
-        return([solvent_names_html[solvent_order[0]],certainty])
+        ### start pca block
+
+        pca = PCA(n_components=2).fit(solvent_data)
+        solvent_data_transformed = pca.transform(solvent_data)
+        predicted_data_transformed = pca.transform(self.single_predictions)
+        centroid_transformed = pca.transform(np.array(centroid).reshape(1,-1))
+        
+        kmeans = KMeans(init="k-means++", n_clusters=31, n_init=4).fit(solvent_data_transformed)
+
+        solvent_labels = np.array(solvent_names)
+
+        h = 0.005
+        data_sol=solvent_data_transformed
+        data = predicted_data_transformed
+        data_avg =  centroid_transformed
+        x_min, x_max = data_sol[:, 0].min() - 0.25, data_sol[:, 0].max() + 0.25
+        y_min, y_max = data_sol[:, 1].min() - 0.25, data_sol[:, 1].max() + 0.25
+        xx, yy = np.meshgrid(np.arange(x_min, x_max, h), np.arange(y_min, y_max, h))
+
+        Z = kmeans.predict(np.c_[xx.ravel(), yy.ravel()])
+        Z = Z.reshape(xx.shape)
+
+        plt.xticks([])
+        plt.yticks([])
+        plt.xlim(x_min, x_max)
+        plt.ylim(y_min, y_max)
+        plt.imshow(Z,interpolation="nearest",extent=(xx.min(), xx.max(), yy.min(), yy.max()),cmap=plt.cm.Set2, aspect="auto",origin="lower",alpha=np.full(Z.shape,0.5))
+
+        for i in range(len(data_sol)):
+            if solvent_labels[i] == solvent_names[solvent_order[0]]:
+                plt.annotate(solvent_labels[i],(data_sol[i][0],data_sol[i][1]),xytext=(data_sol[i][0]+0.0,data_sol[i][1]+0.0),fontsize='x-small',fontweight='bold')
+            else:
+                plt.annotate(solvent_labels[i],(data_sol[i][0],data_sol[i][1]),xytext=(data_sol[i][0]+0.0,data_sol[i][1]+0.0),fontsize='x-small')
+                #plt.annotate('(%i)'%(i+1),(data_sol[i][0],data_sol[i][1]),xytext=(data_sol[i][0]+0.025,data_sol[i][1]+0.0),fontsize='small')
+
+        plt.scatter(data_sol[:, 0],data_sol[:, 1],s=15,color='black',zorder=1)
+        #plt.scatter(data[:, 0],data[:, 1],s=15,color='darkturquoise',zorder=2)
+        #plt.scatter(data_avg[:, 0],data_avg[:, 1],s=15,color='blue',linewidths=1,zorder=3)
+
+        buf = io.BytesIO()
+        plt.savefig(buf, format = 'png', dpi=300)
+        buf.seek(0)
+        string = base64.b64encode(buf.read())
+        uri = 'data:image/png;base64,' + urllib.parse.quote(string)
+
+        # plt.show()
+
+        ### end pca block
+
+        return([solvent_names_html[solvent_order[0]],certainty, uri])
 
     def make_validation_histogram(self, y_pred_test_all, csv_file, hist_file):
 
