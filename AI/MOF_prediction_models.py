@@ -13,6 +13,7 @@ import time
 from datetime import datetime
 import uuid
 from matplotlib import pyplot as plt
+from matplotlib.colors import ListedColormap
 
 ##############rdkit_library##########################
 # import rdkit
@@ -36,7 +37,7 @@ from sklearn.cluster import KMeans
 import yaml
 
 ### stuff for diaplying image in html
-import io, urllib, base64
+import io, base64
 
 ### Set global variables ###
 
@@ -408,7 +409,7 @@ class Solvent_Model(Regression_Model):
 
     def get_final_prediction(self):
         solvent_names = pd.read_csv("%s/additional_data/local_solvent_full.csv"%(startpath))['solvent_name']
-        solvent_names_html = pd.read_csv("%s/additional_data/local_solvent_full.csv"%(startpath))['solvent_name_html']
+        solvent_names_plot = pd.read_csv("%s/additional_data/local_solvent_full.csv"%(startpath))['solvent_name_plot']
         solvent_data = np.loadtxt('%s/additional_data/scaled_five_parameter_local_solvent.dat'%startpath)
 
         centroid = [np.average([self.single_predictions[j][i] for j in range(len(self.single_predictions))]) for i in range(self.n_feat)]
@@ -428,21 +429,21 @@ class Solvent_Model(Regression_Model):
 
         ### start pca block
 
+        plt.figure(figsize=(6.4,2.4))
+
         pca = PCA(n_components=2).fit(solvent_data)
         solvent_data_transformed = pca.transform(solvent_data)
         predicted_data_transformed = pca.transform(self.single_predictions)
         centroid_transformed = pca.transform(np.array(centroid).reshape(1,-1))
         
         kmeans = KMeans(init="k-means++", n_clusters=31, n_init=4).fit(solvent_data_transformed)
+        kmeans_cent = kmeans.cluster_centers_
 
-        solvent_labels = np.array(solvent_names)
+        solvent_labels = np.array(solvent_names_plot)
 
         h = 0.005
-        data_sol=solvent_data_transformed
-        data = predicted_data_transformed
-        data_avg =  centroid_transformed
-        x_min, x_max = data_sol[:, 0].min() - 0.25, data_sol[:, 0].max() + 0.25
-        y_min, y_max = data_sol[:, 1].min() - 0.25, data_sol[:, 1].max() + 0.25
+        x_min, x_max = math.floor(solvent_data_transformed[:, 0].min()/h)*h - 0.25, math.ceil(solvent_data_transformed[:, 0].max()/h)*h + 0.25
+        y_min, y_max = math.floor(solvent_data_transformed[:, 1].min()/h)*h - 0.25, math.ceil(solvent_data_transformed[:, 1].max()/h)*h + 0.25
         xx, yy = np.meshgrid(np.arange(x_min, x_max, h), np.arange(y_min, y_max, h))
 
         Z = kmeans.predict(np.c_[xx.ravel(), yy.ravel()])
@@ -450,32 +451,68 @@ class Solvent_Model(Regression_Model):
 
         plt.xticks([])
         plt.yticks([])
-        plt.xlim(x_min, x_max)
-        plt.ylim(y_min, y_max)
-        plt.imshow(Z,interpolation="nearest",extent=(xx.min(), xx.max(), yy.min(), yy.max()),cmap=plt.cm.Set2, aspect="auto",origin="lower",alpha=np.full(Z.shape,0.5))
+        plt.xlim(x_min, x_max-h)
+        plt.ylim(y_min, y_max-h)
 
-        for i in range(len(data_sol)):
-            if solvent_labels[i] == solvent_names[solvent_order[0]]:
-                plt.annotate(solvent_labels[i],(data_sol[i][0],data_sol[i][1]),xytext=(data_sol[i][0]+0.0,data_sol[i][1]+0.0),fontsize='x-small',fontweight='bold')
-            else:
-                plt.annotate(solvent_labels[i],(data_sol[i][0],data_sol[i][1]),xytext=(data_sol[i][0]+0.0,data_sol[i][1]+0.0),fontsize='x-small')
-                #plt.annotate('(%i)'%(i+1),(data_sol[i][0],data_sol[i][1]),xytext=(data_sol[i][0]+0.025,data_sol[i][1]+0.0),fontsize='small')
+        colors = ["darkorange", "gold", "lawngreen", "lightseagreen","red"]
+        color_ids = [0, 2, 2, 1, 0, 1, 3, 1, 3, 1, 2, 0, 1, 0, 2, 2, 2, 0, 3, 0, 3, 3, 0, 3, 1, 1, 0, 2, 3, 1, 2]
+        plt.imshow(Z,interpolation="nearest",extent=(xx.min(), xx.max(), yy.min(), yy.max()),cmap = ListedColormap([colors[color_id] for color_id in color_ids]), aspect="auto",origin="lower",alpha=np.full(Z.shape,0.5))
 
-        plt.scatter(data_sol[:, 0],data_sol[:, 1],s=15,color='black',zorder=1)
-        #plt.scatter(data[:, 0],data[:, 1],s=15,color='darkturquoise',zorder=2)
-        #plt.scatter(data_avg[:, 0],data_avg[:, 1],s=15,color='blue',linewidths=1,zorder=3)
+        annotation_data = [[(-0.22,0.05),None], # n-butanol
+[(0.06,-0.07),None], # 2-ethoxyethanol
+[(0.35,0.08),{'arrowstyle':'-','relpos':(0,0.5),'lw':0.75}], # n,n-dimethylacetamide
+[(-0.40,0.10),{'arrowstyle':'-','relpos':(1,0.5),'lw':0.75}], # n,n-diethylformamide
+[(0.00,0.07),None], # n-methylformamide
+[(-0.10,0.07),None], # pyridine
+[(0.25,-0.00),{'arrowstyle':'-','relpos':(0,0.5),'lw':0.75}], # chlorobenzene
+[(-0.15,0.10),None], # cyclohexanol
+[(-0.30,-0.05),{'arrowstyle':'-','relpos':(1,0.5),'lw':0.75}], # i-butanol
+[(-0.40,0.17),{'arrowstyle':'-','relpos':(1,0.5),'lw':0.75}], # methylsulfinlymethane
+[(0.15,0.00),None], # 1,4-dioxane
+[(0.15,0.07),None], # ethandiol
+[(-0.12,-0.07),None], # 2-(2-hydroxyethylamino)ethanol
+[(0.03,-0.07),None], # acetone
+[(-0.25,0.00),None], # n,n-dimethylaniline
+[(0.18,0.06),{'arrowstyle':'-','relpos':(0,0.5),'lw':0.75}], # ethanol
+[(-0.15,-0.07),None], # o-propanol
+[(0.00,0.07),None], # water
+[(0.20,-0.01),None], # chloroform
+[(-0.05,0.07),None], # o-xylene
+[(-0.18,0.04),{'arrowstyle':'-','relpos':(1,0.5),'lw':0.75}], # acetonitrile
+[(0.00,-0.07),None], # dichloromethane
+[(0.37,0.03),{'arrowstyle':'-','relpos':(0,0.5),'lw':0.75}], # 1-methylpyrrolidin-2-one
+[(0.40,-0.02),{'arrowstyle':'-','relpos':(0,0.5),'lw':0.75}], # N,N-dimethylformamide  
+[(-0.25,0.10),None], # 1,3-butanediol
+[(0.10,0.00),None], # THF
+[(0.00,0.07),None], # 1,3-dimethyl-1,3-diazinan-2-one
+[(-0.15,0.02),None], # benzene
+[(0.00,-0.07),None], # 2-aminobutan-1-ol
+[(0.12,-0.02),None], # toluene
+[(0.14,-0.06),None]] # methanol
 
+        for i in range(len(solvent_data_transformed)):
+            plt.scatter(solvent_data_transformed[i][0], solvent_data_transformed[i][1], s = 2, color = 'black',zorder=1)
+            fw = 'bold' if solvent_labels[i] == solvent_names[solvent_order[0]] else 'normal'
+            plt.annotate(solvent_labels[i],(solvent_data_transformed[i][0],solvent_data_transformed[i][1]),xytext=(solvent_data_transformed[i][0]+annotation_data[i][0][0],solvent_data_transformed[i][1]+annotation_data[i][0][1]),arrowprops = annotation_data[i][1],fontsize=4, fontweight = fw, ha = 'center', va = 'center', bbox={'boxstyle':'square, pad = 0.0','facecolor':'none','edgecolor':'none'},zorder=2)
+
+        plt.scatter(predicted_data_transformed[:, 0],predicted_data_transformed[:, 1],s = 2, color = 'darkturquoise',zorder=3)
+        plt.scatter(centroid_transformed[:, 0], centroid_transformed[:, 1],s = 2, color = 'blue', zorder=4)
+
+        # for website
         buf = io.BytesIO()
         plt.savefig(buf, format = 'png', dpi=300)
         buf.seek(0)
-        string = base64.b64encode(buf.read())
-        uri = 'data:image/png;base64,' + urllib.parse.quote(string)
+        png_string = str(base64.b64encode(buf.read()))
 
-        # plt.show()
+        # for testing
+        #plt.tight_layout()
+        #plt.savefig('pca_solvents.png', dpi=300)
+        #plt.show()
+        #png_string=''
 
         ### end pca block
 
-        return([solvent_names_html[solvent_order[0]],certainty, uri])
+        return([solvent_names[solvent_order[0]],certainty, png_string])
 
     def make_validation_histogram(self, y_pred_test_all, csv_file, hist_file):
 
