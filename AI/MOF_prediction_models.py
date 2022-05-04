@@ -456,7 +456,7 @@ class Solvent_Model(Regression_Model):
 
         colors = ["darkorange", "gold", "lawngreen", "lightseagreen","red"]
         color_ids = [0, 2, 2, 1, 0, 1, 3, 1, 3, 1, 2, 0, 1, 0, 2, 2, 2, 0, 3, 0, 3, 3, 0, 3, 1, 1, 0, 2, 3, 1, 2]
-        plt.imshow(Z,interpolation="nearest",extent=(xx.min(), xx.max(), yy.min(), yy.max()),cmap = ListedColormap([colors[color_id] for color_id in color_ids]), aspect="auto",origin="lower",alpha=np.full(Z.shape,0.5))
+        plt.imshow(Z, interpolation = "nearest", extent = (xx.min(), xx.max(), yy.min(), yy.max()), cmap = ListedColormap([colors[color_id] for color_id in color_ids]), aspect = "auto", origin = "lower", alpha = np.full(Z.shape,0.4))
 
         annotation_data = [[(-0.22,0.05),None], # n-butanol
 [(0.06,-0.07),None], # 2-ethoxyethanol
@@ -491,24 +491,27 @@ class Solvent_Model(Regression_Model):
 [(0.14,-0.06),None]] # methanol
 
         for i in range(len(solvent_data_transformed)):
-            plt.scatter(solvent_data_transformed[i][0], solvent_data_transformed[i][1], s = 2, color = 'black',zorder=1)
             fw = 'bold' if solvent_labels[i] == solvent_names[solvent_order[0]] else 'normal'
-            plt.annotate(solvent_labels[i],(solvent_data_transformed[i][0],solvent_data_transformed[i][1]),xytext=(solvent_data_transformed[i][0]+annotation_data[i][0][0],solvent_data_transformed[i][1]+annotation_data[i][0][1]),arrowprops = annotation_data[i][1],fontsize=4, fontweight = fw, ha = 'center', va = 'center', bbox={'boxstyle':'square, pad = 0.0','facecolor':'none','edgecolor':'none'},zorder=2)
+            plt.annotate(solvent_labels[i],(solvent_data_transformed[i][0],solvent_data_transformed[i][1]),xytext=(solvent_data_transformed[i][0]+annotation_data[i][0][0],solvent_data_transformed[i][1]+annotation_data[i][0][1]),arrowprops = annotation_data[i][1],fontsize=4, fontweight = fw, ha = 'center', va = 'center', bbox={'boxstyle':'square, pad = 0.0','facecolor':'none','edgecolor':'none'}, zorder = 4)
 
-        plt.scatter(predicted_data_transformed[:, 0],predicted_data_transformed[:, 1],s = 2, color = 'darkturquoise',zorder=3)
-        plt.scatter(centroid_transformed[:, 0], centroid_transformed[:, 1],s = 2, color = 'blue', zorder=4)
+        plt.scatter(solvent_data_transformed[:, 0], solvent_data_transformed[:, 1], s = 2, color = 'black', label = 'Solvent database', zorder = 1)
+        plt.scatter(predicted_data_transformed[:, 0],predicted_data_transformed[:, 1],s = 2, color = 'darkturquoise', label = 'Individual predictions', zorder = 2)
+        plt.scatter(centroid_transformed[:, 0], centroid_transformed[:, 1],s = 2, color = 'blue', label = 'Averaged prediction', zorder = 3)
+        plt.legend(fontsize = 4)
+        plt.tight_layout()
 
         # for website
         buf = io.BytesIO()
-        plt.savefig(buf, format = 'png', dpi=300)
+        plt.savefig(buf, format = 'png', dpi = 300)
         buf.seek(0)
-        png_string = str(base64.b64encode(buf.read()))
+        png_string = base64.b64encode(buf.read()).decode('utf-8')
 
         # for testing
-        #plt.tight_layout()
-        #plt.savefig('pca_solvents.png', dpi=300)
-        #plt.show()
-        #png_string=''
+        '''
+        plt.savefig('pca_solvents.png', dpi = 300)
+        plt.show()
+        png_string = ''
+        '''
 
         ### end pca block
 
