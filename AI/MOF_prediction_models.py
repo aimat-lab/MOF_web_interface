@@ -491,7 +491,7 @@ class Solvent_Model(Regression_Model):
 [(0.14,-0.06),None]] # methanol
 
         for i in range(len(solvent_data_transformed)):
-            fw = 'bold' if solvent_labels[i] == solvent_names[solvent_order[0]] else 'normal'
+            fw = 'bold' if solvent_labels[i] == solvent_labels[solvent_order[0]] else 'normal'
             plt.annotate(solvent_labels[i],(solvent_data_transformed[i][0],solvent_data_transformed[i][1]),xytext=(solvent_data_transformed[i][0]+annotation_data[i][0][0],solvent_data_transformed[i][1]+annotation_data[i][0][1]),arrowprops = annotation_data[i][1],fontsize=4, fontweight = fw, ha = 'center', va = 'center', bbox={'boxstyle':'square, pad = 0.0','facecolor':'none','edgecolor':'none'}, zorder = 4)
 
         plt.scatter(solvent_data_transformed[:, 0], solvent_data_transformed[:, 1], s = 2, color = 'black', label = 'Solvent database', zorder = 1)
