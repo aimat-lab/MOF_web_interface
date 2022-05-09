@@ -85,7 +85,7 @@
 		<td colspan="4" style="width:100%;padding-top:20px">
 		<div style="display:block;vertical-align:top;justify-content:center">
 	 	    <img src="data:image/png;base64,{{ png_string }}" alt="PCA solvent map" width="1280"> 
-		    The plot shows a 2D PCA analysis of the 5D solvent data with the predicted solvent in bold font. Note that the solvent prediction is based on the 5D model and that the closest solvent point in the 2D model must not necessarily correspond to the final prediction.
+		    For the machine learning based solvent prediction, solvents are represented by 5 parameters (polarity, size, etc.). The ML model predicts those 5 parameters, and actual solvents with parameters close to the predicted solvent parameters are identified. The plot shows a two-dimensional visualization (PCA) of the five-dimensional solvent parameters, with the <strong>predicted solvent</strong> highlighted in <strong>bold font</strong>. Note that the solvent prediction is based on proximity in five-dimensional parameter space, while the closest solvent in the two-dimensional visualization does not necessarily correspond to the closest solvent in five-dimensional space, i.e. the final prediction.
 		</div>
 		</td>
 	    </tr>

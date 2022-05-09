@@ -454,34 +454,34 @@ class Solvent_Model(Regression_Model):
         plt.xlim(x_min, x_max-h)
         plt.ylim(y_min, y_max-h)
 
-        colors = ["darkorange", "gold", "lawngreen", "lightseagreen","red"]
-        color_ids = [0, 2, 2, 1, 0, 1, 3, 1, 3, 1, 2, 0, 1, 0, 2, 2, 2, 0, 3, 0, 3, 3, 0, 3, 1, 1, 0, 2, 3, 1, 2]
-        plt.imshow(Z, interpolation = "nearest", extent = (xx.min(), xx.max(), yy.min(), yy.max()), cmap = ListedColormap([colors[color_id] for color_id in color_ids]), aspect = "auto", origin = "lower", alpha = np.full(Z.shape,0.4))
+        colors = ["cornflowerblue", "lightskyblue", "turquoise", "palegreen"]
+        color_ids = [0, 2, 2, 1, 0, 3, 3, 1, 3, 1, 2, 0, 1, 0, 2, 2, 2, 0, 3, 0, 3, 3, 0, 3, 1, 1, 0, 2, 3, 1, 2]
+        plt.imshow(Z, interpolation = "nearest", extent = (xx.min(), xx.max(), yy.min(), yy.max()), cmap = ListedColormap([colors[color_id] for color_id in color_ids]), aspect = "auto", origin = "lower", alpha = np.full(Z.shape, 0.5))
 
         annotation_data = [[(-0.22,0.05),None], # n-butanol
 [(0.06,-0.07),None], # 2-ethoxyethanol
-[(0.35,0.08),{'arrowstyle':'-','relpos':(0,0.5),'lw':0.75}], # n,n-dimethylacetamide
-[(-0.40,0.10),{'arrowstyle':'-','relpos':(1,0.5),'lw':0.75}], # n,n-diethylformamide
+[(0.35,0.08),(0,0.5)], # n,n-dimethylacetamide
+[(-0.40,0.10),(1,0.5)], # n,n-diethylformamide
 [(0.00,0.07),None], # n-methylformamide
 [(-0.10,0.07),None], # pyridine
-[(0.25,-0.00),{'arrowstyle':'-','relpos':(0,0.5),'lw':0.75}], # chlorobenzene
+[(0.25,-0.00),(0,0.5)], # chlorobenzene
 [(-0.15,0.10),None], # cyclohexanol
-[(-0.30,-0.05),{'arrowstyle':'-','relpos':(1,0.5),'lw':0.75}], # i-butanol
-[(-0.40,0.17),{'arrowstyle':'-','relpos':(1,0.5),'lw':0.75}], # methylsulfinlymethane
+[(-0.30,-0.05),(1,0.5)], # i-butanol
+[(-0.40,0.17),(1,0.5)], # methylsulfinlymethane
 [(0.15,0.00),None], # 1,4-dioxane
 [(0.15,0.07),None], # ethandiol
 [(-0.12,-0.07),None], # 2-(2-hydroxyethylamino)ethanol
 [(0.03,-0.07),None], # acetone
 [(-0.25,0.00),None], # n,n-dimethylaniline
-[(0.18,0.06),{'arrowstyle':'-','relpos':(0,0.5),'lw':0.75}], # ethanol
+[(0.18,0.06),(0,0.5)], # ethanol
 [(-0.15,-0.07),None], # o-propanol
 [(0.00,0.07),None], # water
 [(0.20,-0.01),None], # chloroform
 [(-0.05,0.07),None], # o-xylene
-[(-0.18,0.04),{'arrowstyle':'-','relpos':(1,0.5),'lw':0.75}], # acetonitrile
+[(-0.18,0.04),(1,0.5)], # acetonitrile
 [(0.00,-0.07),None], # dichloromethane
-[(0.37,0.03),{'arrowstyle':'-','relpos':(0,0.5),'lw':0.75}], # 1-methylpyrrolidin-2-one
-[(0.40,-0.02),{'arrowstyle':'-','relpos':(0,0.5),'lw':0.75}], # N,N-dimethylformamide  
+[(0.37,0.03),(0,0.5)], # 1-methylpyrrolidin-2-one
+[(0.40,-0.02),(0,0.5)], # N,N-dimethylformamide  
 [(-0.25,0.10),None], # 1,3-butanediol
 [(0.10,0.00),None], # THF
 [(0.00,0.07),None], # 1,3-dimethyl-1,3-diazinan-2-one
@@ -490,13 +490,21 @@ class Solvent_Model(Regression_Model):
 [(0.12,-0.02),None], # toluene
 [(0.14,-0.06),None]] # methanol
 
-        for i in range(len(solvent_data_transformed)):
-            fw = 'bold' if solvent_labels[i] == solvent_labels[solvent_order[0]] else 'normal'
-            plt.annotate(solvent_labels[i],(solvent_data_transformed[i][0],solvent_data_transformed[i][1]),xytext=(solvent_data_transformed[i][0]+annotation_data[i][0][0],solvent_data_transformed[i][1]+annotation_data[i][0][1]),arrowprops = annotation_data[i][1],fontsize=4, fontweight = fw, ha = 'center', va = 'center', bbox={'boxstyle':'square, pad = 0.0','facecolor':'none','edgecolor':'none'}, zorder = 4)
+        plt.scatter(solvent_data_transformed[:, 0], solvent_data_transformed[:, 1], s = 2, color = 'black', label = 'Solvent database', zorder = 1, alpha = 0.7)
 
-        plt.scatter(solvent_data_transformed[:, 0], solvent_data_transformed[:, 1], s = 2, color = 'black', label = 'Solvent database', zorder = 1)
-        plt.scatter(predicted_data_transformed[:, 0],predicted_data_transformed[:, 1],s = 2, color = 'darkturquoise', label = 'Individual predictions', zorder = 2)
-        plt.scatter(centroid_transformed[:, 0], centroid_transformed[:, 1],s = 2, color = 'blue', label = 'Averaged prediction', zorder = 3)
+        for i in range(len(solvent_data_transformed)):
+            if solvent_labels[i] == solvent_labels[solvent_order[0]]:
+                fw, a = 'bold', 1 
+                plt.scatter(solvent_data_transformed[i][0],solvent_data_transformed[i][1], s = 12, color = 'red', edgecolor = 'black', lw = 0.5, label = 'Predicted solvent')
+            else: 
+                fw, a = 'normal', 0.7
+
+            ap = None if not annotation_data[i][1] else {'arrowstyle':'-', 'lw': 0.5,'alpha':a,'relpos':annotation_data[i][1]}
+
+            plt.annotate(solvent_labels[i],(solvent_data_transformed[i][0],solvent_data_transformed[i][1]),xytext=(solvent_data_transformed[i][0]+annotation_data[i][0][0],solvent_data_transformed[i][1]+annotation_data[i][0][1]),arrowprops = ap,fontsize=4, fontweight = fw, ha = 'center', va = 'center', bbox={'boxstyle':'square, pad = 0.0','facecolor':'none','edgecolor':'none'}, zorder = 4, alpha = a)
+
+        plt.scatter(predicted_data_transformed[:, 0],predicted_data_transformed[:, 1],s = 12, color = 'yellow', edgecolor = 'black', lw = 0.5, label = 'Individual predictions', zorder = 2)
+        plt.scatter(centroid_transformed[:, 0], centroid_transformed[:, 1],s = 12, color = 'darkorange', edgecolor = 'black', lw = 0.5, label = 'Averaged prediction', zorder = 3)
         plt.legend(fontsize = 4)
         plt.tight_layout()
 
